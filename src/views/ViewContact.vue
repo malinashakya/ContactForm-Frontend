@@ -24,12 +24,39 @@
         <td>{{ contact.email }}</td>
         <td>{{ contact.message }}</td>
         <td>
-          <button @click="editContact(contact.id)">Edit</button>
+          <button @click="openEditDialog(contact)">Edit</button>
           <button @click="deleteContact(contact.id)">Delete</button>
         </td>
       </tr>
       </tbody>
     </table>
+
+    <!-- Edit Dialog -->
+    <div v-if="showEditDialog" class="dialog-overlay">
+      <div class="dialog-content">
+        <h3>Edit Contact</h3>
+        <form @submit.prevent="updateContact">
+          <label>Name:</label>
+          <input v-model="editedContact.name" type="text" required />
+
+          <label>Address:</label>
+          <input v-model="editedContact.address" type="text" required />
+
+          <label>Contact:</label>
+          <input v-model="editedContact.contact" type="text" required />
+
+          <label>Email:</label>
+          <input v-model="editedContact.email" type="email" required />
+
+          <label>Message:</label>
+          <textarea v-model="editedContact.message" required></textarea>
+
+          <button type="submit">Update</button>
+          <button type="button" @click="closeEditDialog">Cancel</button>
+        </form>
+        <div v-if="updateSuccess" class="success-message">{{ updateSuccess }}</div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -47,10 +74,13 @@ interface Contact {
   message: string;
 }
 
-// Define refs to hold the contacts details and loading state
+// Define refs to hold the contacts details, loading state, and dialog state
 const contacts = ref<Contact[]>([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
+const showEditDialog = ref(false);
+const editedContact = ref<Contact | null>(null);
+const updateSuccess = ref<string | null>(null);
 
 // Fetch data from API when the component is mounted
 onMounted(async () => {
@@ -65,10 +95,36 @@ onMounted(async () => {
   }
 });
 
-// Handle edit contact
-const editContact = (id: number) => {
-  console.log(`Edit contact with id: ${id}`);
-  // Implement your edit logic here
+// Open the edit dialog and set the contact to be edited
+const openEditDialog = (contact: Contact) => {
+  editedContact.value = { ...contact }; // Create a copy to edit
+  showEditDialog.value = true;
+};
+
+// Close the edit dialog
+const closeEditDialog = () => {
+  showEditDialog.value = false;
+  editedContact.value = null;
+  updateSuccess.value = null;
+};
+
+// Update contact details
+const updateContact = async () => {
+  if (editedContact.value) {
+    try {
+      await axios.put(`/api/contacts/${editedContact.value.id}`, editedContact.value);
+      // Update the contact list with the new data
+      contacts.value = contacts.value.map(contact =>
+          contact.id === editedContact.value!.id ? editedContact.value! : contact
+      );
+      updateSuccess.value = 'Contact updated successfully!';
+    } catch (err) {
+      error.value = 'Failed to update contact.';
+      console.error('Error updating contact:', err);
+    } finally {
+      closeEditDialog();
+    }
+  }
 };
 
 // Handle delete contact
@@ -107,5 +163,50 @@ button {
   margin: 0 5px;
   padding: 5px 10px;
   cursor: pointer;
+}
+
+/* Dialog styles */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+}
+
+.dialog-content h3 {
+  margin-top: 0;
+}
+
+.dialog-content form {
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog-content label {
+  margin: 5px 0 2px;
+}
+
+.dialog-content input,
+.dialog-content textarea {
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.dialog-content button {
+  margin: 5px 0;
 }
 </style>
