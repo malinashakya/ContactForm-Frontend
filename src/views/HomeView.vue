@@ -56,6 +56,9 @@ const formData = reactive({
   message: '',
 })
 
+//Handling submit
+// async and await help you handle tasks that take time (like fetching data or waiting for a process to complete)
+// Async is like asking your friend to fetch a package and promising to handle it later, while await is like pausing your activities until they return with the package.
 const handleSubmit = async () => {
   try {
     const response = await axios.post('/api/contacts', toRaw(formData))

@@ -1,8 +1,11 @@
 <template>
   <div>
     <h2>Contact Data</h2>
+    <!-- Display loading message while data is being fetched -->
     <div v-if="loading">Loading...</div>
+    <!-- Display error message if there is an issue fetching data -->
     <div v-if="error">{{ error }}</div>
+    <!-- Display table only if data is loaded and no errors occurred -->
     <table v-if="!loading && !error">
       <thead>
       <tr>
@@ -16,6 +19,7 @@
       </tr>
       </thead>
       <tbody>
+      <!-- Iterate over contacts and create a row for each contact -->
       <tr v-for="contact in contacts" :key="contact.id">
         <td>{{ contact.id }}</td>
         <td>{{ contact.name }}</td>
@@ -24,7 +28,9 @@
         <td>{{ contact.email }}</td>
         <td>{{ contact.message }}</td>
         <td>
+          <!-- Button to open the edit dialog for a contact -->
           <button @click="openEditDialog(contact)">Edit</button>
+          <!-- Button to delete a contact -->
           <button @click="deleteContact(contact.id)">Delete</button>
         </td>
       </tr>
@@ -32,39 +38,49 @@
     </table>
 
     <!-- Edit Dialog -->
+    <!-- This dialog appears when showEditDialog is true -->
     <div v-if="showEditDialog" class="dialog-overlay">
       <div class="dialog-content">
         <h3>Edit Contact</h3>
+        <!-- Form to update contact details -->
         <form @submit.prevent="updateContact">
+          <!-- Input for the contact's name -->
           <label>Name:</label>
-          <input v-model="editedContact.name" type="text" required />
+          <input v-model="editedContact.name" required type="text"/>
 
+          <!-- Input for the contact's address -->
           <label>Address:</label>
-          <input v-model="editedContact.address" type="text" required />
+          <input v-model="editedContact.address" required type="text"/>
 
+          <!-- Input for the contact's phone number -->
           <label>Contact:</label>
-          <input v-model="editedContact.contact" type="text" required />
+          <input v-model="editedContact.contact" required type="text"/>
 
+          <!-- Input for the contact's email -->
           <label>Email:</label>
-          <input v-model="editedContact.email" type="email" required />
+          <input v-model="editedContact.email" required type="email"/>
 
+          <!-- Textarea for the contact's message -->
           <label>Message:</label>
           <textarea v-model="editedContact.message" required></textarea>
 
+          <!-- Button to submit the form and update the contact -->
           <button type="submit">Update</button>
+          <!-- Button to close the dialog without making changes -->
           <button type="button" @click="closeEditDialog">Cancel</button>
         </form>
+        <!-- Show success message if the contact was updated successfully -->
         <div v-if="updateSuccess" class="success-message">{{ updateSuccess }}</div>
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from 'vue';
+<script lang="ts" setup>
+import {ref, onMounted} from 'vue';
 import axios from 'axios';
 
-// Define types of the contact data
+// Define types for the contact data
 interface Contact {
   id: number;
   name: string;
@@ -74,7 +90,7 @@ interface Contact {
   message: string;
 }
 
-// Define refs to hold the contacts details, loading state, and dialog state
+// Refs to hold contact details, loading state, and dialog state
 const contacts = ref<Contact[]>([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
@@ -82,47 +98,49 @@ const showEditDialog = ref(false);
 const editedContact = ref<Contact | null>(null);
 const updateSuccess = ref<string | null>(null);
 
-// Fetch data from API when the component is mounted
+// Fetch contact data when the component is mounted
 onMounted(async () => {
   try {
+    // Make a GET request to fetch contacts
     const response = await axios.get('/api/contacts');
-    contacts.value = response.data.result;
+    contacts.value = response.data.result; // Store the result in contacts
   } catch (err) {
-    error.value = 'Failed to load contacts.';
-    console.error('Error fetching contacts:', err);
+    error.value = 'Failed to load contacts.'; // Set error message if request fails
+    console.error('Error fetching contacts:', err); // Log error for debugging
   } finally {
-    loading.value = false;
+    loading.value = false; // Set loading to false after request completes
   }
 });
 
 // Open the edit dialog and set the contact to be edited
 const openEditDialog = (contact: Contact) => {
-  editedContact.value = { ...contact }; // Create a copy to edit
-  showEditDialog.value = true;
+  editedContact.value = {...contact}; // Create a copy of the contact for editing
+  showEditDialog.value = true; // Show the edit dialog
 };
 
 // Close the edit dialog
 const closeEditDialog = () => {
-  showEditDialog.value = false;
-  editedContact.value = null;
-  updateSuccess.value = null;
+  showEditDialog.value = false; // Hide the edit dialog
+  editedContact.value = null; // Clear the edited contact
+  updateSuccess.value = null; // Clear any success message
 };
 
 // Update contact details
 const updateContact = async () => {
   if (editedContact.value) {
     try {
+      // Make a PUT request to update the contact
       await axios.put(`/api/contacts/${editedContact.value.id}`, editedContact.value);
       // Update the contact list with the new data
       contacts.value = contacts.value.map(contact =>
           contact.id === editedContact.value!.id ? editedContact.value! : contact
       );
-      updateSuccess.value = 'Contact updated successfully!';
+      updateSuccess.value = 'Contact updated successfully!'; // Set success message
     } catch (err) {
-      error.value = 'Failed to update contact.';
-      console.error('Error updating contact:', err);
+      error.value = 'Failed to update contact.'; // Set error message if update fails
+      console.error('Error updating contact:', err); // Log error for debugging
     } finally {
-      closeEditDialog();
+      closeEditDialog(); // Close the edit dialog after update
     }
   }
 };
@@ -130,11 +148,13 @@ const updateContact = async () => {
 // Handle delete contact
 const deleteContact = async (id: number) => {
   try {
+    // Make a DELETE request to remove the contact
     await axios.delete(`/api/contacts/${id}`);
+    // Remove the deleted contact from the list
     contacts.value = contacts.value.filter(contact => contact.id !== id);
   } catch (err) {
-    error.value = 'Failed to delete contact.';
-    console.error('Error deleting contact:', err);
+    error.value = 'Failed to delete contact.'; // Set error message if delete fails
+    console.error('Error deleting contact:', err); // Log error for debugging
   }
 };
 </script>

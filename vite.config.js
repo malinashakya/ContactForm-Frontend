@@ -23,7 +23,6 @@ export default defineConfig({
             '/api': {
                 target: 'http://localhost:8080/ContactForm-1.0-SNAPSHOT', // Your backend server URL
                 changeOrigin: true, // Changes the origin of the host header to the target URL
-                // rewrite: (path) => path.replace(/^\/api/, '') // Removes /api from the path when sending the request to the backend
             }
         }
     }
