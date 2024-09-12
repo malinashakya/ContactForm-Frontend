@@ -2,7 +2,7 @@
   <section class="contact">
     <!-- Greeting Section -->
     <div class="greet">
-      <Button @click="navigateToViewContact" class="view-contact-button">
+      <Button class="view-contact-button" @click="navigateToViewContact">
         View Contact
       </Button>
       <h2>Contact Me</h2>
@@ -11,58 +11,62 @@
 
     <!-- Contact Form Section -->
     <form class="contact-form" @submit.prevent="handleSubmit">
-      <div class="form-group p-mb-4"> <!-- Add margin-bottom using PrimeFlex -->
-        <label for="name" class="p-label">Name</label>
+      <div class="form-group p-mb-4">
+        <label class="p-label" for="name">Name</label>
         <InputText
             id="name"
             v-model="formData.name"
-            placeholder="Your Name"
-            required
             class="p-inputtext p-component custom-input"
-        />
+            placeholder="Your Name"
+                    />
+        <div v-if="formErrors.name" class="error">{{ formErrors.name }}</div>
       </div>
       <div class="form-group p-mb-4">
         <label for="email">Email</label>
         <InputText
             id="email"
             v-model="formData.email"
-            placeholder="Your Email"
-            required
-            type="email"
             class="p-inputtext p-component custom-input"
+            placeholder="Your Email"
+                        type="email"
         />
+        <div v-if="formErrors.email" class="error">{{ formErrors.email }}</div>
       </div>
       <div class="form-group p-mb-4">
         <label for="contact">Contact</label>
         <InputText
             id="contact"
             v-model="formData.contact"
-            placeholder="Your Contact"
-            required
-            type="text"
             class="p-inputtext p-component custom-input"
+            placeholder="Your Contact"
+                        type="text"
         />
+        <div v-if="formErrors.contact" class="error">{{ formErrors.contact }}</div>
+
       </div>
       <div class="form-group p-mb-4">
         <label for="address">Address</label>
         <InputText
             id="address"
             v-model="formData.address"
-            placeholder="Your Address"
-            required
-            type="text"
             class="p-inputtext p-component custom-input"
+            placeholder="Your Address"
+                        type="text"
         />
+        <div v-if="formErrors.address" class="error">{{ formErrors.address }}</div>
+
       </div>
       <div class="form-group p-mb-4">
         <label for="message">Message</label>
         <InputText
             id="message"
             v-model="formData.message"
-            placeholder="Your Message"
-            required
             class="p-inputtext p-component custom-input text-area"
+            placeholder="Your Message"
+
         />
+        <div v-if="formErrors.message" class="error">{{ formErrors.message }}</div>
+
       </div>
       <Button type="submit">Send Message</Button>
     </form>
@@ -70,11 +74,13 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, toRaw } from 'vue'
+import {reactive, toRaw} from 'vue'
 import axios from 'axios'
-import { useRouter } from 'vue-router'
+import {useRouter} from 'vue-router'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
+//For Validation using Yup
+import * as yup from 'yup'
 
 const formData = reactive({
   name: '',
@@ -83,12 +89,62 @@ const formData = reactive({
   address: '',
   message: '',
 })
+//Reactive object to hold errors occurred in form
+const formErrors = reactive({
+  name: '',
+  email: '',
+  contact: '',
+  address: '',
+  message: '',
+})
 
+//Yup schema for form validation
+const schema = yup.object().shape(
+    {
+      name: yup.string().required('Name is required'),
+      email: yup.string().email('Invalid email format').required('Email is required'),
+      contact: yup.string().length(10, 'Contact must be exactly 10 digits')
+          .required('Contact is required'),
+      address: yup.string().required('Address is required'),
+      message: yup.string().required('Message is required'),
+    }
+)
+
+const validateForm=async () =>{
+  try{
+    //Reset the form errors before validation is done again
+    Object.keys(formErrors).forEach(key =>(formErrors[key]=''));
+
+    await schema.validate(formData,{abortEarly:false});
+    return true;
+  }
+  catch(err)
+  {
+    //Setting form errors for each fields
+    if(err instanceof yup.ValidationError)
+    {
+      err.inner.forEach(validationError=>{
+        formErrors[validationError.path]=validationError.message
+      })
+
+    }
+    return false;
+  }
+}
+// Handle form submission
 const handleSubmit = async () => {
+  // Validate the form before making the request
+  const isValid = await validateForm()
+  if (!isValid) {
+    return // Stop submission if validation fails
+  }
+
   try {
     const response = await axios.post('/api/contacts', toRaw(formData))
     console.log('Response:', response.data)
     alert(`Thank you, ${formData.name}! Your message has been sent.`)
+
+    // Clear form data after successful submission
     formData.name = ''
     formData.email = ''
     formData.contact = ''
@@ -103,7 +159,7 @@ const handleSubmit = async () => {
 const router = useRouter()
 
 const navigateToViewContact = () => {
-  router.push({ name: 'viewcontact' })
+  router.push({name: 'viewcontact'})
 }
 </script>
 
@@ -177,13 +233,18 @@ button,
 
 button,
 .p-button:hover {
-background: dodgerblue;
+  background: dodgerblue;
 }
 
 .text-area {
   height: 100px; /* Specific height for text area */
 }
 
+.error {
+  color: red;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
 /* Responsive styles */
 @media (min-width: 2560px) {
   .contact h2 {

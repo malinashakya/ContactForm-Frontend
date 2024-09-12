@@ -17,10 +17,10 @@
         <Column class="p-2" header="Action">
           <template #body="slotProps">
             <!-- Button to open the edit dialog for a contact -->
-            <Button class="m-2 p-2" @click="openEditDialog(slotProps.data)"> Edit</Button>
+            <Button class="m-2 p-2" style="background: #eded07; border: 1px solid rgba(244,244,73,0.89); border-radius: 3px" @click="openEditDialog(slotProps.data)"> Edit</Button>
 
             <!-- Button to delete a contact -->
-            <Button class="m-2 p-2" @click="deleteContact(slotProps.data.id)">Delete</Button>
+            <Button class="m-2 p-2" style="background: red; border: 1px solid #e35555; border-radius: 3px" @click="deleteContact(slotProps.data.id)">Delete</Button>
           </template>
         </Column>
       </DataTable>
@@ -65,11 +65,11 @@
         </div>
 
 
-        <Button class="button p-2 m-2" type="submit">
+        <Button class="button p-2 m-2" style="background: #eded07; border: 1px solid rgba(244,244,73,0.89); border-radius: 3px " type="submit">
           Submit
         </Button>
         <!-- Button to close the dialog without making changes -->
-        <Button class="button p-2 m-2" @click="closeEditDialog">
+        <Button class="button p-2 m-2 " style="background: red; border: 1px solid #e35555; border-radius: 3px" @click="closeEditDialog">
           Cancel
         </Button>
 

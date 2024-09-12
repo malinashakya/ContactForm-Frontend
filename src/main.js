@@ -10,6 +10,10 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 // For Prime flex
 import 'primeflex/primeflex.css';
+//For prime Icon
+import 'primeicons/primeicons.css';
+import InputText from "primevue/inputtext";
+import Button from "primevue/button";
 
 
 library.add(fas, fab)
@@ -21,4 +25,6 @@ app.use(router)
 app.use(PrimeVue)
 app.component('DataTable', DataTable)
 app.component('Column', Column)
+app.component('Button', Button)
+app.component('InputText', InputText)
 app.mount('#app')
