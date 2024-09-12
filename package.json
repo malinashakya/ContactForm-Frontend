@@ -13,9 +13,14 @@
     "@fortawesome/free-brands-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/vue-fontawesome": "^3.0.8",
+    "@vee-validate/i18n": "^4.13.2",
+    "@vee-validate/rules": "^4.13.2",
     "axios": "^1.7.7",
+    "primevue": "^4.0.7",
+    "vee-validate": "^4.13.2",
     "vue": "^3.4.29",
-    "vue-router": "^4.3.3"
+    "vue-router": "^4.3.3",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.5",

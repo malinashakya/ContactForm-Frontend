@@ -1,11 +1,10 @@
-<!-- src/views/ContactView.vue -->
 <template>
   <section class="contact">
     <!-- Greeting Section -->
     <div class="greet">
-      <button @click="navigateToViewContact" class="view-contact-button">
+      <Button @click="navigateToViewContact" class="view-contact-button">
         View Contact
-      </button>
+      </Button>
       <h2>Contact Me</h2>
       <h3>Let's Greet and Meet.</h3>
     </div>
@@ -13,32 +12,32 @@
     <!-- Contact Form Section -->
     <form class="contact-form" @submit.prevent="handleSubmit">
       <div class="form-group">
-        <label for="name">Name</label>
-        <input id="name" v-model="formData.name" placeholder="Your Name" required type="text" />
+        <label for="name" class="p-label">Name</label>
+        <InputText id="name" v-model="formData.name" placeholder="Your Name" required />
       </div>
       <div class="form-group">
         <label for="email">Email</label>
-        <input id="email" v-model="formData.email" placeholder="Your Email" required type="email" />
+        <InputText id="email" v-model="formData.email" placeholder="Your Email" required type="email" />
       </div>
       <div class="form-group">
         <label for="contact">Contact</label>
-        <input id="contact" v-model="formData.contact" placeholder="Your Contact" required type="text" />
+        <InputText id="contact" v-model="formData.contact" placeholder="Your Contact" required type="text" />
       </div>
       <div class="form-group">
         <label for="address">Address</label>
-        <input id="address" v-model="formData.address" placeholder="Your Address" required type="text" />
+        <InputText id="address" v-model="formData.address" placeholder="Your Address" required type="text" />
       </div>
       <div class="form-group">
         <label for="message">Message</label>
-        <textarea
+        <InputText
             id="message"
             v-model="formData.message"
             placeholder="Your Message"
             required
-            rows="5"
-        ></textarea>
+            class="text-area"
+        />
       </div>
-      <button type="submit">Send Message</button>
+      <Button type="submit">Send Message</Button>
     </form>
   </section>
 </template>
@@ -47,6 +46,8 @@
 import { reactive, toRaw } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import Button from 'primevue/button'
+import InputText from 'primevue/inputtext'
 
 const formData = reactive({
   name: '',
@@ -56,9 +57,6 @@ const formData = reactive({
   message: '',
 })
 
-//Handling submit
-// async and await help you handle tasks that take time (like fetching data or waiting for a process to complete)
-// Async is like asking your friend to fetch a package and promising to handle it later, while await is like pausing your activities until they return with the package.
 const handleSubmit = async () => {
   try {
     const response = await axios.post('/api/contacts', toRaw(formData))
@@ -150,6 +148,7 @@ const navigateToViewContact = () => {
   border-radius: 4px; /* Rounded corners for input and textarea */
   font-size: 1rem; /* Font size for input and textarea */
   color: #333; /* Text color */
+  background: whitesmoke;
 }
 
 .form-group input:focus,
@@ -157,7 +156,8 @@ const navigateToViewContact = () => {
   outline: 2px solid #1abc9c; /* Outline color on focus */
 }
 
-button {
+button,
+.p-button {
   padding: 0.7rem 1.5rem; /* Padding inside the button */
   border: none; /* Remove default border */
   border-radius: 4px; /* Rounded corners for the button */
@@ -168,10 +168,13 @@ button {
   transition: background-color 0.3s; /* Smooth background color transition */
 }
 
-button:hover {
+button:hover,
+.p-button:hover {
   background-color: #16a085; /* Button color change on hover */
 }
-
+.text-area {
+  height:100px;/* Allow vertical resize only */
+}
 /* Responsive styles for very large screens */
 @media (min-width: 2560px) {
   .contact h2 {
@@ -196,7 +199,8 @@ button:hover {
     max-width: 800px; /* Larger max-width for the form */
   }
 
-  button {
+  button,
+  .p-button {
     font-size: 30px; /* Larger font size for button text */
   }
 }
@@ -207,5 +211,3 @@ button:hover {
   }
 }
 </style>
-
-
