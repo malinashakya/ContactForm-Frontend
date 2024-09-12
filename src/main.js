@@ -8,6 +8,9 @@ import { fab } from '@fortawesome/free-brands-svg-icons'
 import PrimeVue from 'primevue/config';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+// For Prime flex
+import 'primeflex/primeflex.css';
+
 
 library.add(fas, fab)
 

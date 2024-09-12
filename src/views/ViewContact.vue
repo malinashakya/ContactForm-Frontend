@@ -6,61 +6,78 @@
     <!-- Display error message if there is an issue fetching data -->
     <div v-if="error">{{ error }}</div>
     <!-- Display table only if data is loaded and no errors occurred -->
+    <div class="p-d-flex p-flex-column p-ai-center p-4">
+      <DataTable v-if="!loading && !error" :value="contacts" show-gridlines tableStyle="min-width: 50rem">
+        <Column class="p-2" field="id" header="ID"></Column>
+        <Column class="p-2" field="name" header="Name"></Column>
+        <Column class="p-2" field="address" header="Address"></Column>
+        <Column class="p-2" field="contact" header="Contact"></Column>
+        <Column class="p-2" field="email" header="Email"></Column>
+        <Column class="p-2 " field="message" header="Message"></Column>
+        <Column class="p-2" header="Action">
+          <template #body="slotProps">
+            <!-- Button to open the edit dialog for a contact -->
+            <Button class="m-2 p-2" @click="openEditDialog(slotProps.data)"> Edit</Button>
 
-    <DataTable v-if="!loading && !error" :value="contacts" tableStyle="min-width: 50rem" show-gridlines>
-      <Column field="id" header="ID"></Column>
-      <Column field="name" header="Name"></Column>
-      <Column field="address" header="Address"></Column>
-      <Column field="contact" header="Contact"></Column>
-      <Column field="email" header="Email"></Column>
-      <Column field="message" header="Message"></Column>
-      <Column header="Action">
-        <template #body="slotProps">
-          <!-- Button to open the edit dialog for a contact -->
-          <Button @click="openEditDialog(slotProps.data)" > Edit </Button>
-
-          <!-- Button to delete a contact -->
-          <Button @click="deleteContact(slotProps.data.id)">Delete</Button>
-        </template>
-      </Column>
-    </DataTable>
-
+            <!-- Button to delete a contact -->
+            <Button class="m-2 p-2" @click="deleteContact(slotProps.data.id)">Delete</Button>
+          </template>
+        </Column>
+      </DataTable>
+    </div>
     <!-- Edit Dialog -->
     <!-- This dialog appears when showEditDialog is true -->
-    <div v-if="showEditDialog" class="dialog-overlay">
-      <div class="dialog-content">
-        <h3>Edit Contact</h3>
-        <!-- Form to update contact details -->
-        <form @submit.prevent="updateContact">
-          <!-- Input for the contact's name -->
-          <label>Name:</label>
-          <input v-model="editedContact.name" required type="text"/>
+    <Dialog v-model:visible="showEditDialog"
+            :style="{ width: '30vw', background:'grey', padding:'10px',border: '1px solid grey' } "
+            header="Edit Contact"
+            modal>
+      <!-- Form to update contact details -->
+      <form class="p-fluid" @submit.prevent="updateContact">
+        <!-- Input for the contact's name -->
+        <div class="field">
+          <label for="name">Name:</label>
+          <InputText id="name" v-model="editedContact.name" class="p-3 custom-input " required type="text"/>
+        </div>
 
-          <!-- Input for the contact's address -->
-          <label>Address:</label>
-          <input v-model="editedContact.address" required type="text"/>
+        <!-- Input for the contact's address -->
+        <div class="field">
+          <label for="address">Address:</label>
+          <InputText id="address" v-model="editedContact.address" class="p-3 custom-input" required type="text"/>
+        </div>
 
-          <!-- Input for the contact's phone number -->
-          <label>Contact:</label>
-          <input v-model="editedContact.contact" required type="text"/>
+        <!-- Input for the contact's phone number -->
+        <div class="field">
+          <label for="contact">Contact:</label>
+          <InputText id="contact" v-model="editedContact.contact" class="p-3 custom-input" required type="text"/>
+        </div>
 
-          <!-- Input for the contact's email -->
-          <label>Email:</label>
-          <input v-model="editedContact.email" required type="email"/>
+        <!-- Input for the contact's email -->
+        <div class="field">
+          <label for="email">Email:</label>
+          <InputText id="email" v-model="editedContact.email" class="p-3 custom-input" required type="email"/>
+        </div>
 
-          <!-- Textarea for the contact's message -->
-          <label>Message:</label>
-          <textarea v-model="editedContact.message" required></textarea>
+        <!-- Textarea for the contact's message -->
+        <div class="field">
+          <label for="message">Message:</label>
+          <InputText id="message" v-model="editedContact.message" class="p-2 border rounded custom-textarea"
+                     required></InputText>
+        </div>
 
-          <!-- Button to submit the form and update the contact -->
-          <button type="submit">Update</button>
-          <!-- Button to close the dialog without making changes -->
-          <button type="button" @click="closeEditDialog">Cancel</button>
-        </form>
-        <!-- Show success message if the contact was updated successfully -->
-        <div v-if="updateSuccess" class="success-message">{{ updateSuccess }}</div>
-      </div>
-    </div>
+
+        <Button class="button p-2 m-2" type="submit">
+          Submit
+        </Button>
+        <!-- Button to close the dialog without making changes -->
+        <Button class="button p-2 m-2" @click="closeEditDialog">
+          Cancel
+        </Button>
+
+      </form>
+
+      <!-- Show success message if the contact was updated successfully -->
+      <div v-if="updateSuccess" class="success-message mt-2">{{ updateSuccess }}</div>
+    </Dialog>
   </div>
 </template>
 
@@ -69,6 +86,9 @@ import {ref, onMounted} from 'vue';
 import axios from 'axios';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import Dialog from 'primevue/dialog';
+import InputText from 'primevue/inputtext';
+
 
 // Define types for the contact data
 interface Contact {
@@ -150,73 +170,24 @@ const deleteContact = async (id: number) => {
 </script>
 
 <style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-th {
-  background-color: #f4f4f4;
-  text-align: left;
-}
-
-tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-button {
-  margin: 0 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-/* Dialog styles */
-.dialog-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.dialog-content {
-  background: #fff;
-  padding: 20px;
+.custom-input,
+.custom-textarea {
+  background-color: lightgray;
+  border: 1px solid lightgray;
   border-radius: 5px;
-  width: 300px;
+  margin: 5px 20px;
 }
 
-.dialog-content h3 {
-  margin-top: 0;
+.custom-textarea {
+  height: 100px;
 }
 
-.dialog-content form {
-  display: flex;
-  flex-direction: column;
-}
-
-.dialog-content label {
-  margin: 5px 0 2px;
-}
-
-.dialog-content input,
-.dialog-content textarea {
-  margin-bottom: 10px;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.dialog-content button {
-  margin: 5px 0;
+.button {
+  background: lightgray;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  width: 90px;
+  height: 40px;
+  color: black;
 }
 </style>
