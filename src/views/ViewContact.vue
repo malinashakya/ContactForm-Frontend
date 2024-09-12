@@ -6,36 +6,24 @@
     <!-- Display error message if there is an issue fetching data -->
     <div v-if="error">{{ error }}</div>
     <!-- Display table only if data is loaded and no errors occurred -->
-    <table v-if="!loading && !error">
-      <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Address</th>
-        <th>Contact</th>
-        <th>Email</th>
-        <th>Message</th>
-        <th>Action</th>
-      </tr>
-      </thead>
-      <tbody>
-      <!-- Iterate over contacts and create a row for each contact -->
-      <tr v-for="contact in contacts" :key="contact.id">
-        <td>{{ contact.id }}</td>
-        <td>{{ contact.name }}</td>
-        <td>{{ contact.address }}</td>
-        <td>{{ contact.contact }}</td>
-        <td>{{ contact.email }}</td>
-        <td>{{ contact.message }}</td>
-        <td>
+
+    <DataTable v-if="!loading && !error" :value="contacts" tableStyle="min-width: 50rem" show-gridlines>
+      <Column field="id" header="ID"></Column>
+      <Column field="name" header="Name"></Column>
+      <Column field="address" header="Address"></Column>
+      <Column field="contact" header="Contact"></Column>
+      <Column field="email" header="Email"></Column>
+      <Column field="message" header="Message"></Column>
+      <Column header="Action">
+        <template #body="slotProps">
           <!-- Button to open the edit dialog for a contact -->
-          <button @click="openEditDialog(contact)">Edit</button>
+          <Button @click="openEditDialog(slotProps.data)" > Edit </Button>
+
           <!-- Button to delete a contact -->
-          <button @click="deleteContact(contact.id)">Delete</button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+          <Button @click="deleteContact(slotProps.data.id)">Delete</Button>
+        </template>
+      </Column>
+    </DataTable>
 
     <!-- Edit Dialog -->
     <!-- This dialog appears when showEditDialog is true -->
@@ -79,6 +67,8 @@
 <script lang="ts" setup>
 import {ref, onMounted} from 'vue';
 import axios from 'axios';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 
 // Define types for the contact data
 interface Contact {
