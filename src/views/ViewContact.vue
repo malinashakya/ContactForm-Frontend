@@ -120,21 +120,21 @@ const error = ref<string | null>(null);
 const showEditDialog = ref(false);
 const editedContact = ref<Contact | null>(null);
 const updateSuccess = ref<string | null>(null);
-const formErrors=ref({
-  name:'',
-  address:'',
-  contact:'',
-  email:'',
-  message:'',
+const formErrors = ref({
+  name: '',
+  address: '',
+  contact: '',
+  email: '',
+  message: '',
 });
 
-const schema=yup.object().shape({
-  name:yup.string().min('2').required('Name is required')
-      .matches(/^[A-Za-z\s]+$/, 'Name can only contain letters and spaces'),
-  address: yup.string().required('Address is required'),
-  contact:yup.string().required('Contact is required'),
-  email:yup.string().required('Email is required').email('Invalid email'),
-  message:yup.string().required('Message is required'),
+const schema = yup.object().shape({
+  name: yup.string().min('2').required('Name is required')
+      .matches(/^[A-Za-z\s]+$/, 'Name can only contain letters and spaces').max(255),
+  address: yup.string().required('Address is required').min('2').max('255'),
+  contact: yup.string().required('Contact is required').min('10', 'Contact must be exactly 10 digits'),
+  email: yup.string().required('Email is required').email('Invalid email'),
+  message: yup.string().required('Message is required'),
 })
 
 const validateField = async (field: keyof Contact) => {
@@ -157,7 +157,7 @@ const validateForm = async () => {
 
     // Validate form data against Yup schema
     if (editedContact.value) {
-      await schema.validate(editedContact.value, { abortEarly: false });
+      await schema.validate(editedContact.value, {abortEarly: false});
       return true;
     }
     return false;
@@ -244,10 +244,10 @@ const deleteContact = async (id: number) => {
 .custom-input,
 .custom-textarea {
   background-color: white;
-  color:black;
+  color: black;
   border: 1px solid white;
   border-radius: 5px;
-  margin-left:10px;
+  margin-left: 10px;
 }
 
 .custom-textarea {

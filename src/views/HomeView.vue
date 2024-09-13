@@ -102,11 +102,12 @@ const formErrors = reactive({
 //Yup schema for form validation
 const schema = yup.object().shape(
     {
-      name: yup.string().required('Name is required'),
+      name: yup.string().required('Name is required').matches(/^[A-Za-z\s]+$/, 'Name can only contain letters and spaces')
+          .max(255).min('2'),
       email: yup.string().email('Invalid email format').required('Email is required'),
       contact: yup.string().length(10, 'Contact must be exactly 10 digits')
           .required('Contact is required'),
-      address: yup.string().required('Address is required'),
+      address: yup.string().required('Address is required').min('2').max('255') ,
       message: yup.string().required('Message is required'),
     }
 )
