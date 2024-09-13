@@ -10,79 +10,100 @@
     </div>
 
     <!-- Contact Form Section -->
-    <form class="contact-form" @submit.prevent="handleSubmit">
+    <Form @submit="handleSubmit" class="contact-form">
       <div class="form-group p-mb-4">
-        <label class="p-label" for="name">Name<span class="required">*</span></label>
-        <InputText
+        <label for="name">Name<span class="required">*</span></label>
+        <Field
+            name="name"
+            as="input"
             id="name"
             v-model="formData.name"
-            class="p-inputtext p-component custom-input"
+            rules="required|min:3"
             placeholder="Your Name"
         />
-        <div v-if="formErrors.name" class="error">{{ formErrors.name }}</div>
+        <ErrorMessage name="name" class="error" />
       </div>
+
       <div class="form-group p-mb-4">
         <label for="email">Email<span class="required">*</span></label>
-        <InputText
+        <Field
+            name="email"
+            as="input"
             id="email"
             v-model="formData.email"
-            class="p-inputtext p-component custom-input"
+            rules="required|email"
             placeholder="Your Email"
             type="email"
         />
-        <div v-if="formErrors.email" class="error">{{ formErrors.email }}</div>
+        <ErrorMessage name="email" class="error" />
       </div>
+
       <div class="form-group p-mb-4">
         <label for="contact">Contact<span class="required">*</span></label>
-        <InputText
+        <Field
+            name="contact"
+            as="input"
             id="contact"
             v-model="formData.contact"
-            class="p-inputtext p-component custom-input"
+            rules="required|min:10"
             placeholder="Your Contact"
-            type="text"
         />
-        <div v-if="formErrors.contact" class="error">{{ formErrors.contact }}</div>
-
+        <ErrorMessage name="contact" class="error" />
       </div>
+
       <div class="form-group p-mb-4">
         <label for="address">Address<span class="required">*</span></label>
-        <InputText
+        <Field
+            name="address"
+            as="input"
             id="address"
             v-model="formData.address"
-            class="p-inputtext p-component custom-input"
+            rules="required"
             placeholder="Your Address"
-            type="text"
         />
-        <div v-if="formErrors.address" class="error">{{ formErrors.address }}</div>
-
+        <ErrorMessage name="address" class="error" />
       </div>
+
       <div class="form-group p-mb-4">
         <label for="message">Message<span class="required">*</span></label>
-        <InputText
+        <Field
+            name="message"
+            as="textarea"
             id="message"
             v-model="formData.message"
-            class="p-inputtext p-component custom-input text-area"
+            rules="required|min:10"
             placeholder="Your Message"
-
+            rows="4"
         />
-        <div v-if="formErrors.message" class="error">{{ formErrors.message }}</div>
-
+        <ErrorMessage name="message" class="error" />
       </div>
+
       <Button type="submit">Send Message</Button>
-    </form>
+    </Form>
   </section>
 </template>
 
-<script lang="ts" setup>
-// Added  watch for non-enter needing purpose for error
-import {reactive, toRaw, watch} from 'vue'
-import axios from 'axios'
-import {useRouter} from 'vue-router'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-//For Validation using Yup
-import * as yup from 'yup'
 
+
+<script lang="ts" setup>
+import { reactive, watch, toRaw } from 'vue'
+import { Form, Field, ErrorMessage, defineRule, configure, useField } from 'vee-validate'
+import { required, email, min } from '@vee-validate/rules'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+import Button from 'primevue/button'
+
+// Register validation rules
+defineRule('required', required)
+defineRule('email', email)
+defineRule('min', min)
+
+// Configure VeeValidate if needed
+configure({
+  // Additional configuration can be added here if necessary
+})
+
+// Reactive form data
 const formData = reactive({
   name: '',
   email: '',
@@ -90,7 +111,8 @@ const formData = reactive({
   address: '',
   message: '',
 })
-//Reactive object to hold errors occurred in form
+
+// Reactive errors object
 const formErrors = reactive({
   name: '',
   email: '',
@@ -99,55 +121,56 @@ const formErrors = reactive({
   message: '',
 })
 
-//Yup schema for form validation
-const schema = yup.object().shape(
-    {
-      name: yup.string().required('Name is required'),
-      email: yup.string().email('Invalid email format').required('Email is required'),
-      contact: yup.string().length(10, 'Contact must be exactly 10 digits')
-          .required('Contact is required'),
-      address: yup.string().required('Address is required'),
-      message: yup.string().required('Message is required'),
-    }
-)
+// Watchers for validation
+watch(() => formData.name, async () => await validateField('name'))
+watch(() => formData.email, async () => await validateField('email'))
+watch(() => formData.contact, async () => await validateField('contact'))
+watch(() => formData.address, async () => await validateField('address'))
+watch(() => formData.message, async () => await validateField('message'))
 
-// Function to validate individual fields
 const validateField = async (field: keyof typeof formData) => {
   try {
-    await schema.validateAt(field, formData)
-    formErrors[field] = ''
-  } catch (err) {
-    if (err instanceof yup.ValidationError) {
-      formErrors[field] = err.message
+    const fieldValue = formData[field]
+    const fieldRules = {
+      name: 'required|min:3',
+      email: 'required|email',
+      contact: 'required|min:10',
+      address: 'required',
+      message: 'required|min:10'
     }
+
+    const rule = fieldRules[field]
+    const { meta } = useField(field, rule)
+    const isValid = await meta.validate(fieldValue)
+
+    if (isValid) {
+      formErrors[field] = ''
+    } else {
+      formErrors[field] = meta.errors[0]
+    }
+  } catch (error) {
+    console.error(`Error validating field ${field}:`, error)
   }
 }
-
-// Watchers for individual fields
-watch(() => formData.name, () => validateField('name'))
-watch(() => formData.email, () => validateField('email'))
-watch(() => formData.contact, () => validateField('contact'))
-watch(() => formData.address, () => validateField('address'))
-watch(() => formData.message, () => validateField('message'))
 
 const validateForm = async () => {
   try {
-    //Reset the form errors before validation is done again
-    Object.keys(formErrors).forEach(key => (formErrors[key] = ''));
+    // Reset the form errors before validation
+    Object.keys(formErrors).forEach(key => (formErrors[key] = ''))
 
-    await schema.validate(formData, {abortEarly: false});
-    return true;
-  } catch (err) {
-    //Setting form errors for each fields
-    if (err instanceof yup.ValidationError) {
-      err.inner.forEach(validationError => {
-        formErrors[validationError.path] = validationError.message
-      })
-
+    // Validate each field
+    for (const key of Object.keys(formData)) {
+      await validateField(key as keyof typeof formData)
     }
-    return false;
+
+    // Check if there are any validation errors
+    return !Object.values(formErrors).some(error => error !== '')
+  } catch (error) {
+    console.error('Error validating form:', error)
+    return false
   }
 }
+
 // Handle form submission
 const handleSubmit = async () => {
   // Validate the form before making the request
@@ -162,11 +185,7 @@ const handleSubmit = async () => {
     alert(`Thank you, ${formData.name}! Your message has been sent.`)
 
     // Clear form data after successful submission
-    formData.name = ''
-    formData.email = ''
-    formData.contact = ''
-    formData.address = ''
-    formData.message = ''
+    Object.keys(formData).forEach(key => (formData[key] = ''))
   } catch (error) {
     console.error('Error sending message:', error)
     alert('An error occurred while sending your message. Please try again.')
@@ -176,9 +195,11 @@ const handleSubmit = async () => {
 const router = useRouter()
 
 const navigateToViewContact = () => {
-  router.push({name: 'viewcontact'})
+  router.push({ name: 'viewcontact' })
 }
 </script>
+
+
 
 <style scoped>
 .contact {
