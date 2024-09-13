@@ -10,72 +10,72 @@
     </div>
 
     <!-- Contact Form Section -->
-    <Form @submit="handleSubmit" class="contact-form">
+    <Form class="contact-form" @submit="handleSubmit">
       <div class="form-group p-mb-4">
         <label for="name">Name<span class="required">*</span></label>
         <Field
-            name="name"
-            as="input"
             id="name"
             v-model="formData.name"
-            rules="required|min:3"
+            as="input"
+            name="name"
             placeholder="Your Name"
+            rules="required|min:3"
         />
-        <ErrorMessage name="name" class="error" />
+        <ErrorMessage class="error" name="name"/>
       </div>
 
       <div class="form-group p-mb-4">
         <label for="email">Email<span class="required">*</span></label>
         <Field
-            name="email"
-            as="input"
             id="email"
             v-model="formData.email"
-            rules="required|email"
+            as="input"
+            name="email"
             placeholder="Your Email"
+            rules="required|email"
             type="email"
         />
-        <ErrorMessage name="email" class="error" />
+        <ErrorMessage class="error" name="email"/>
       </div>
 
       <div class="form-group p-mb-4">
         <label for="contact">Contact<span class="required">*</span></label>
         <Field
-            name="contact"
-            as="input"
             id="contact"
             v-model="formData.contact"
-            rules="required|min:10"
+            as="input"
+            name="contact"
             placeholder="Your Contact"
+            rules="required|min:10"
         />
-        <ErrorMessage name="contact" class="error" />
+        <ErrorMessage class="error" name="contact"/>
       </div>
 
       <div class="form-group p-mb-4">
         <label for="address">Address<span class="required">*</span></label>
         <Field
-            name="address"
-            as="input"
             id="address"
             v-model="formData.address"
-            rules="required"
+            as="input"
+            name="address"
             placeholder="Your Address"
+            rules="required"
         />
-        <ErrorMessage name="address" class="error" />
+        <ErrorMessage class="error" name="address"/>
       </div>
 
       <div class="form-group p-mb-4">
         <label for="message">Message<span class="required">*</span></label>
         <Field
-            name="message"
-            as="textarea"
             id="message"
             v-model="formData.message"
-            rules="required|min:10"
+            as="textarea"
+            name="message"
             placeholder="Your Message"
             rows="4"
+            rules="required|min:10"
         />
-        <ErrorMessage name="message" class="error" />
+        <ErrorMessage class="error" name="message"/>
       </div>
 
       <Button type="submit">Send Message</Button>
@@ -84,11 +84,11 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, watch, toRaw } from 'vue'
-import { Form, Field, ErrorMessage, defineRule, configure, useField } from 'vee-validate'
-import { required, email, min } from '@vee-validate/rules'
+import {reactive, watch, toRaw} from 'vue'
+import {Form, Field, ErrorMessage, defineRule, configure, useField} from 'vee-validate'
+import {required, email, min} from '@vee-validate/rules'
 import axios from 'axios'
-import { useRouter } from 'vue-router'
+import {useRouter} from 'vue-router'
 import Button from 'primevue/button'
 
 // Register validation rules
@@ -138,7 +138,7 @@ const validateField = async (field: keyof typeof formData) => {
     }
 
     const rule = fieldRules[field]
-    const { meta } = useField(field, rule)
+    const {meta} = useField(field, rule)
     const isValid = await meta.validate(fieldValue)
 
     if (isValid) {
@@ -193,7 +193,7 @@ const handleSubmit = async () => {
 const router = useRouter()
 
 const navigateToViewContact = () => {
-  router.push({ name: 'viewcontact' })
+  router.push({name: 'viewcontact'})
 }
 </script>
 

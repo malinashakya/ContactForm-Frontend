@@ -2,8 +2,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ViewContact from "@/views/ViewContact.vue"
-import AddMessage from "@/views/AddMessage.vue";
-import ContactView from "@/views/ContactView.vue";
+import AddMessage from "@/views/AddMessage-VeeValidation.vue";
+import ContactView from "@/views/ContactView-VeeValidation.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

@@ -107,7 +107,7 @@ const schema = yup.object().shape(
       email: yup.string().email('Invalid email format').required('Email is required'),
       contact: yup.string().length(10, 'Contact must be exactly 10 digits')
           .required('Contact is required'),
-      address: yup.string().required('Address is required').min('2').max('255') ,
+      address: yup.string().required('Address is required').min('2').max('255'),
       message: yup.string().required('Message is required'),
     }
 )

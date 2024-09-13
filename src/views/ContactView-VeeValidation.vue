@@ -37,7 +37,7 @@
             header="Edit Contact"
             modal>
       <!-- Form to update contact details -->
-      <Form @submit="updateContact" class="contact-form">
+      <Form class="contact-form" @submit="updateContact">
         <div class="form-group p-mb-4">
           <label for="name">Name<span class="required">*</span></label>
           <Field
@@ -124,13 +124,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted} from 'vue';
 import axios from 'axios';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Dialog from 'primevue/dialog';
-import { ErrorMessage, Field, Form, defineRule, configure } from 'vee-validate';
-import { required, email, min } from '@vee-validate/rules';
+import {ErrorMessage, Field, Form, defineRule, configure} from 'vee-validate';
+import {required, email, min} from '@vee-validate/rules';
 
 // Define validation rules
 defineRule('required', required);
@@ -171,7 +171,7 @@ onMounted(async () => {
 
 // Open the edit dialog and set the contact to be edited
 const openEditDialog = (contact: Contact) => {
-  editedContact.value = { ...contact }; // Create a copy of the contact for editing
+  editedContact.value = {...contact}; // Create a copy of the contact for editing
   showEditDialog.value = true; // Show the edit dialog
 };
 
