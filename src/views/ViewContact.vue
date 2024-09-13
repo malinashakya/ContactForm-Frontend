@@ -7,13 +7,13 @@
     <div v-if="error">{{ error }}</div>
     <!-- Display table only if data is loaded and no errors occurred -->
     <div class="p-d-flex p-flex-column p-ai-center p-4">
-      <DataTable v-if="!loading && !error" :value="contacts" show-gridlines tableStyle="min-width: 50rem">
-        <Column class="p-2" field="id" header="ID"></Column>
-        <Column class="p-2" field="name" header="Name"></Column>
-        <Column class="p-2" field="address" header="Address"></Column>
-        <Column class="p-2" field="contact" header="Contact"></Column>
-        <Column class="p-2" field="email" header="Email"></Column>
-        <Column class="p-2 " field="message" header="Message"></Column>
+      <DataTable v-if="!loading && !error" :value="contacts" show-gridlines tableStyle="min-width: 50rem" >
+        <Column class="p-2" field="id" header="ID"  ></Column>
+        <Column class="p-2" field="name" header="Name" ></Column>
+        <Column class="p-2" field="address" header="Address" ></Column>
+        <Column class="p-2" field="contact" header="Contact" ></Column>
+        <Column class="p-2" field="email" header="Email" ></Column>
+        <Column class="p-2 " field="message" header="Message" ></Column>
         <Column class="p-2" header="Action">
           <template #body="slotProps">
             <!-- Button to open the edit dialog for a contact -->

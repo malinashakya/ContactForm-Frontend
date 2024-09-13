@@ -12,52 +12,52 @@
     <!-- Contact Form Section -->
     <form class="contact-form" @submit.prevent="handleSubmit">
       <div class="form-group p-mb-4">
-        <label class="p-label" for="name">Name</label>
+        <label class="p-label" for="name">Name<span class="required">*</span></label>
         <InputText
             id="name"
             v-model="formData.name"
             class="p-inputtext p-component custom-input"
             placeholder="Your Name"
-                    />
+        />
         <div v-if="formErrors.name" class="error">{{ formErrors.name }}</div>
       </div>
       <div class="form-group p-mb-4">
-        <label for="email">Email</label>
+        <label for="email">Email<span class="required">*</span></label>
         <InputText
             id="email"
             v-model="formData.email"
             class="p-inputtext p-component custom-input"
             placeholder="Your Email"
-                        type="email"
+            type="email"
         />
         <div v-if="formErrors.email" class="error">{{ formErrors.email }}</div>
       </div>
       <div class="form-group p-mb-4">
-        <label for="contact">Contact</label>
+        <label for="contact">Contact<span class="required">*</span></label>
         <InputText
             id="contact"
             v-model="formData.contact"
             class="p-inputtext p-component custom-input"
             placeholder="Your Contact"
-                        type="text"
+            type="text"
         />
         <div v-if="formErrors.contact" class="error">{{ formErrors.contact }}</div>
 
       </div>
       <div class="form-group p-mb-4">
-        <label for="address">Address</label>
+        <label for="address">Address<span class="required">*</span></label>
         <InputText
             id="address"
             v-model="formData.address"
             class="p-inputtext p-component custom-input"
             placeholder="Your Address"
-                        type="text"
+            type="text"
         />
         <div v-if="formErrors.address" class="error">{{ formErrors.address }}</div>
 
       </div>
       <div class="form-group p-mb-4">
-        <label for="message">Message</label>
+        <label for="message">Message<span class="required">*</span></label>
         <InputText
             id="message"
             v-model="formData.message"
@@ -74,7 +74,7 @@
 </template>
 
 <script lang="ts" setup>
-import {reactive, toRaw} from 'vue'
+import {reactive, toRaw, watch} from 'vue'
 import axios from 'axios'
 import {useRouter} from 'vue-router'
 import Button from 'primevue/button'
@@ -110,21 +110,37 @@ const schema = yup.object().shape(
     }
 )
 
-const validateForm=async () =>{
-  try{
-    //Reset the form errors before validation is done again
-    Object.keys(formErrors).forEach(key =>(formErrors[key]=''));
-
-    await schema.validate(formData,{abortEarly:false});
-    return true;
+// Function to validate individual fields
+const validateField = async (field: keyof typeof formData) => {
+  try {
+    await schema.validateAt(field, formData)
+    formErrors[field] = ''
+  } catch (err) {
+    if (err instanceof yup.ValidationError) {
+      formErrors[field] = err.message
+    }
   }
-  catch(err)
-  {
+}
+
+// Watchers for individual fields
+watch(() => formData.name, () => validateField('name'))
+watch(() => formData.email, () => validateField('email'))
+watch(() => formData.contact, () => validateField('contact'))
+watch(() => formData.address, () => validateField('address'))
+watch(() => formData.message, () => validateField('message'))
+
+const validateForm = async () => {
+  try {
+    //Reset the form errors before validation is done again
+    Object.keys(formErrors).forEach(key => (formErrors[key] = ''));
+
+    await schema.validate(formData, {abortEarly: false});
+    return true;
+  } catch (err) {
     //Setting form errors for each fields
-    if(err instanceof yup.ValidationError)
-    {
-      err.inner.forEach(validationError=>{
-        formErrors[validationError.path]=validationError.message
+    if (err instanceof yup.ValidationError) {
+      err.inner.forEach(validationError => {
+        formErrors[validationError.path] = validationError.message
       })
 
     }
@@ -237,14 +253,20 @@ button,
 }
 
 .text-area {
-  height: 100px; /* Specific height for text area */
+  height: 100px;
 }
 
 .error {
-  color: red;
+  color: rgba(255, 0, 0, 0.85);
   font-size: 1rem;
   margin-top: 0.5rem;
 }
+
+.required {
+  padding-left: 2px;
+  color: rgba(255, 0, 0, 0.85);
+}
+
 /* Responsive styles */
 @media (min-width: 2560px) {
   .contact h2 {
