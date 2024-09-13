@@ -83,8 +83,6 @@
   </section>
 </template>
 
-
-
 <script lang="ts" setup>
 import { reactive, watch, toRaw } from 'vue'
 import { Form, Field, ErrorMessage, defineRule, configure, useField } from 'vee-validate'
@@ -198,8 +196,6 @@ const navigateToViewContact = () => {
   router.push({ name: 'viewcontact' })
 }
 </script>
-
-
 
 <style scoped>
 .contact {
@@ -325,4 +321,3 @@ button,
   }
 }
 </style>
-
