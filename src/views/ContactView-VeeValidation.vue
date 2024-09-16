@@ -12,6 +12,7 @@
         <Column class="p-2" field="name" header="Name"></Column>
         <Column class="p-2" field="address" header="Address"></Column>
         <Column class="p-2" field="contact" header="Contact"></Column>
+        <Column class="p-2" field="contactVia" header="Contact Via"></Column>
         <Column class="p-2" field="email" header="Email"></Column>
         <Column class="p-2 " field="message" header="Message"></Column>
         <Column class="p-2" header="Action">
@@ -30,6 +31,8 @@
         </Column>
       </DataTable>
     </div>
+
+
     <!-- Edit Dialog -->
     <!-- This dialog appears when showEditDialog is true -->
     <Dialog v-model:visible="showEditDialog"
@@ -49,6 +52,24 @@
               rules="required|min:3"
           />
           <ErrorMessage class="error" name="name"/>
+        </div>
+
+        <!-- Dropdown for selecting contact via -->
+        <div class="form-group p-mb-4">
+          <label for="contactVia">Contact Via<span class="required">*</span></label>
+          <Field
+              id="contactVia"
+              v-model="editedContact.contactVia"
+              as="select"
+              name="contactVia"
+              rules="required"
+          >
+            <option value="">Select...</option>
+            <option v-for="option in contactViaOptions" :key="option" :value="option">
+              {{ option }}
+            </option>
+          </Field>
+          <ErrorMessage class="error" name="contactVia"/>
         </div>
 
         <div class="form-group p-mb-4">
@@ -124,7 +145,7 @@
 </template>
 
 <script lang="ts" setup>
-import {ref, onMounted} from 'vue';
+import {ref, onMounted, reactive} from 'vue';
 import axios from 'axios';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -145,6 +166,7 @@ interface Contact {
   contact: string;
   email: string;
   message: string;
+  contactvia:'Email'|'Phone';
 }
 
 // Refs to hold contact details, loading state, and dialog state
@@ -155,6 +177,17 @@ const showEditDialog = ref(false);
 const editedContact = ref<Contact | null>(null);
 const updateSuccess = ref<string | null>(null);
 
+const contactViaOptions = reactive<string[]>([]);
+
+//To fetch data from the backend
+const fetchContactViaOptions = async () => {
+  try {
+    const response = await axios.get('/api/contacts/contactvia')
+    contactViaOptions.push(...response.data)
+  } catch (error) {
+    console.error('Error fetching data of contact via options:', error);
+  }
+}
 // Fetch contact data when the component is mounted
 onMounted(async () => {
   try {
@@ -214,6 +247,11 @@ const deleteContact = async (id: number) => {
     console.error('Error deleting contact:', err); // Log error for debugging
   }
 };
+
+
+onMounted(() => {
+  fetchContactViaOptions()
+})
 </script>
 
 <style scoped>

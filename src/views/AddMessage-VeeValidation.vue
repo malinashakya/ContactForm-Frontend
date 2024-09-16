@@ -21,7 +21,25 @@
             placeholder="Your Name"
             rules="required|min:2|lettersOnly"
         />
-        <ErrorMessage class="error" name="name" />
+        <ErrorMessage class="error" name="name"/>
+      </div>
+
+      <!-- Dropdown for selecting contact via -->
+      <div class="form-group p-mb-4">
+        <label for="contactVia">Contact Via<span class="required">*</span></label>
+        <Field
+            id="contactVia"
+            v-model="formData.contactVia"
+            as="select"
+            name="contactVia"
+            rules="required"
+        >
+          <option value="">Select...</option>
+          <option v-for="option in contactViaOptions" :key="option" :value="option">
+            {{ option }}
+          </option>
+        </Field>
+        <ErrorMessage class="error" name="contactVia"/>
       </div>
 
       <div class="form-group p-mb-4">
@@ -35,7 +53,7 @@
             rules="required|email"
             type="email"
         />
-        <ErrorMessage class="error" name="email" />
+        <ErrorMessage class="error" name="email"/>
       </div>
 
       <div class="form-group p-mb-4">
@@ -48,7 +66,7 @@
             placeholder="Your Contact"
             rules="required|exactLength:10"
         />
-        <ErrorMessage class="error" name="contact" />
+        <ErrorMessage class="error" name="contact"/>
       </div>
 
       <div class="form-group p-mb-4">
@@ -62,7 +80,7 @@
             rules="required|min:3"
 
         />
-        <ErrorMessage class="error" name="address" />
+        <ErrorMessage class="error" name="address"/>
       </div>
 
       <div class="form-group p-mb-4">
@@ -76,7 +94,7 @@
             rows="4"
             rules="required|min:10"
         />
-        <ErrorMessage class="error" name="message" />
+        <ErrorMessage class="error" name="message"/>
       </div>
 
       <Button type="submit">Send Message</Button>
@@ -85,11 +103,11 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
-import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate'
-import { required, email, min } from '@vee-validate/rules'
+import {onMounted, reactive} from 'vue'
+import {Form, Field, ErrorMessage, defineRule, configure} from 'vee-validate'
+import {required, email, min} from '@vee-validate/rules'
 import axios from 'axios'
-import { useRouter } from 'vue-router'
+import {useRouter} from 'vue-router'
 import Button from 'primevue/button'
 import Textarea from "primevue/textarea";
 
@@ -136,7 +154,21 @@ const formData = reactive({
   contact: '',
   address: '',
   message: '',
+  contactVia: '',
 })
+
+const contactViaOptions = reactive<string[]>([]);
+
+//To fetch data from the backend
+const fetchContactViaOptions = async () => {
+  try {
+    const response = await axios.get('/api/contacts/contactvia')
+    contactViaOptions.push(...response.data)
+  } catch (error) {
+    console.error('Error fetching data of contact via options:', error);
+  }
+}
+
 
 // Handle form submission
 const handleSubmit = async () => {
@@ -156,8 +188,12 @@ const handleSubmit = async () => {
 const router = useRouter()
 
 const navigateToViewContact = () => {
-  router.push({ name: 'viewcontact' })
+  router.push({name: 'viewcontact'})
 }
+
+onMounted(() => {
+  fetchContactViaOptions()
+})
 </script>
 
 <style scoped>
@@ -284,3 +320,7 @@ button,
   }
 }
 </style>
+
+
+
+
