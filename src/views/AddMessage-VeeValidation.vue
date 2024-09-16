@@ -19,9 +19,9 @@
             as="input"
             name="name"
             placeholder="Your Name"
-            rules="required|min:3"
+            rules="required|min:2|lettersOnly"
         />
-        <ErrorMessage class="error" name="name"/>
+        <ErrorMessage class="error" name="name" />
       </div>
 
       <div class="form-group p-mb-4">
@@ -32,10 +32,10 @@
             as="input"
             name="email"
             placeholder="Your Email"
-            rules="required|email"
+            rules="required|email|customEmail"
             type="email"
         />
-        <ErrorMessage class="error" name="email"/>
+        <ErrorMessage class="error" name="email" />
       </div>
 
       <div class="form-group p-mb-4">
@@ -46,9 +46,9 @@
             as="input"
             name="contact"
             placeholder="Your Contact"
-            rules="required|min:10"
+            rules="required"
         />
-        <ErrorMessage class="error" name="contact"/>
+        <ErrorMessage class="error" name="contact" />
       </div>
 
       <div class="form-group p-mb-4">
@@ -59,9 +59,9 @@
             as="input"
             name="address"
             placeholder="Your Address"
-            rules="required"
+            rules="required|min:3"
         />
-        <ErrorMessage class="error" name="address"/>
+        <ErrorMessage class="error" name="address" />
       </div>
 
       <div class="form-group p-mb-4">
@@ -75,7 +75,7 @@
             rows="4"
             rules="required|min:10"
         />
-        <ErrorMessage class="error" name="message"/>
+        <ErrorMessage class="error" name="message" />
       </div>
 
       <Button type="submit">Send Message</Button>
@@ -84,21 +84,53 @@
 </template>
 
 <script lang="ts" setup>
-import {reactive, watch, toRaw} from 'vue'
-import {Form, Field, ErrorMessage, defineRule, configure, useField} from 'vee-validate'
-import {required, email, min} from '@vee-validate/rules'
+import { reactive } from 'vue'
+import { Form, Field, ErrorMessage, defineRule, configure } from 'vee-validate'
+import { required, email, min } from '@vee-validate/rules'
 import axios from 'axios'
-import {useRouter} from 'vue-router'
+import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
+
+// Custom email rule to check for '@' and '.'
+const customEmail = (value: string) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(value) || 'Email must contain "@" and "."'
+}
+
+// Custom name rule to check for letters only (no numbers or special characters)
+const lettersOnly = (value: string) => {
+  const nameRegex = /^[a-zA-Z\s]+$/
+  return nameRegex.test(value) || 'Name should contain only letters.'
+}
+
+// Custom contact rule to check for exactly 10 digits
+const exactLength = (value: string, [length]: [number]) => {
+  return value.length === length || `Contact should be exactly ${length} digits.`
+}
 
 // Register validation rules
 defineRule('required', required)
 defineRule('email', email)
 defineRule('min', min)
+defineRule('customEmail', customEmail)
+defineRule('lettersOnly', lettersOnly)
+defineRule('exactLength', exactLength)
 
-// Configure VeeValidate if needed
+// Configure VeeValidate for customized messages
 configure({
-  // Additional configuration can be added here if necessary
+  validateOnInput: true, // Enables real-time validation
+  generateMessage: (context) => {
+    const fieldName = context.field
+    const messages = {
+      required: `${fieldName} is required.`,
+      min: `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} should be at least ${context.rule?.params[0]} characters.`,
+      email: 'Email must be valid and contain "@" and "."',
+      lettersOnly: 'Name should contain only letters.',
+      numeric: 'Contact should contain only numbers.',
+      exactLength: 'Contact should be exactly 10 digits long.'
+    }
+    return messages[context.rule?.name] || `Invalid ${fieldName}.`
+  }
 })
 
 // Reactive form data
@@ -110,75 +142,10 @@ const formData = reactive({
   message: '',
 })
 
-// Reactive errors object
-const formErrors = reactive({
-  name: '',
-  email: '',
-  contact: '',
-  address: '',
-  message: '',
-})
-
-// Watchers for validation
-watch(() => formData.name, async () => await validateField('name'))
-watch(() => formData.email, async () => await validateField('email'))
-watch(() => formData.contact, async () => await validateField('contact'))
-watch(() => formData.address, async () => await validateField('address'))
-watch(() => formData.message, async () => await validateField('message'))
-
-const validateField = async (field: keyof typeof formData) => {
-  try {
-    const fieldValue = formData[field]
-    const fieldRules = {
-      name: 'required|min:3',
-      email: 'required|email',
-      contact: 'required|min:10',
-      address: 'required',
-      message: 'required|min:10'
-    }
-
-    const rule = fieldRules[field]
-    const {meta} = useField(field, rule)
-    const isValid = await meta.validate(fieldValue)
-
-    if (isValid) {
-      formErrors[field] = ''
-    } else {
-      formErrors[field] = meta.errors[0]
-    }
-  } catch (error) {
-    console.error(`Error validating field ${field}:`, error)
-  }
-}
-
-const validateForm = async () => {
-  try {
-    // Reset the form errors before validation
-    Object.keys(formErrors).forEach(key => (formErrors[key] = ''))
-
-    // Validate each field
-    for (const key of Object.keys(formData)) {
-      await validateField(key as keyof typeof formData)
-    }
-
-    // Check if there are any validation errors
-    return !Object.values(formErrors).some(error => error !== '')
-  } catch (error) {
-    console.error('Error validating form:', error)
-    return false
-  }
-}
-
 // Handle form submission
 const handleSubmit = async () => {
-  // Validate the form before making the request
-  const isValid = await validateForm()
-  if (!isValid) {
-    return // Stop submission if validation fails
-  }
-
   try {
-    const response = await axios.post('/api/contacts', toRaw(formData))
+    const response = await axios.post('/api/contacts', formData)
     console.log('Response:', response.data)
     alert(`Thank you, ${formData.name}! Your message has been sent.`)
 
@@ -193,7 +160,7 @@ const handleSubmit = async () => {
 const router = useRouter()
 
 const navigateToViewContact = () => {
-  router.push({name: 'viewcontact'})
+  router.push({ name: 'viewcontact' })
 }
 </script>
 
@@ -311,7 +278,7 @@ button,
 
   button,
   .p-button {
-    font-size: 1.875rem; /* Adjusted for responsiveness */
+    font-size: 1.875rem;
   }
 }
 
