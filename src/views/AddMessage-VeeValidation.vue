@@ -46,7 +46,7 @@
             as="input"
             name="contact"
             placeholder="Your Contact"
-            rules="required"
+            rules="required|exactLength:10"
         />
         <ErrorMessage class="error" name="contact" />
       </div>
@@ -105,8 +105,11 @@ const lettersOnly = (value: string) => {
 
 // Custom contact rule to check for exactly 10 digits
 const exactLength = (value: string, [length]: [number]) => {
-  return value.length === length || `Contact should be exactly ${length} digits.`
-}
+  const trimmedValue = value.trim();
+  const isNumeric = /^[0-9]+$/.test(trimmedValue); // Ensure only digits
+  if (!isNumeric) return 'Contact should contain only numbers.';
+  return trimmedValue.length == length || `Contact should be exactly ${length} digits.`;
+};
 
 // Register validation rules
 defineRule('required', required)
@@ -126,7 +129,6 @@ configure({
       min: `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} should be at least ${context.rule?.params[0]} characters.`,
       email: 'Email must be valid and contain "@" and "."',
       lettersOnly: 'Name should contain only letters.',
-      numeric: 'Contact should contain only numbers.',
       exactLength: 'Contact should be exactly 10 digits long.'
     }
     return messages[context.rule?.name] || `Invalid ${fieldName}.`
