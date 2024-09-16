@@ -32,7 +32,7 @@
             as="input"
             name="email"
             placeholder="Your Email"
-            rules="required|email|customEmail"
+            rules="required|email"
             type="email"
         />
         <ErrorMessage class="error" name="email" />
@@ -91,12 +91,6 @@ import axios from 'axios'
 import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
 
-// Custom email rule to check for '@' and '.'
-const customEmail = (value: string) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(value) || 'Email must contain "@" and "."'
-}
-
 // Custom name rule to check for letters only (no numbers or special characters)
 const lettersOnly = (value: string) => {
   const nameRegex = /^[a-zA-Z\s]+$/
@@ -105,7 +99,6 @@ const lettersOnly = (value: string) => {
 
 // Custom contact rule to check for exactly 10 digits
 const exactLength = (value: string, [length]: [number]) => {
-  const trimmedValue = value.trim();
   const isNumeric = /^[0-9]+$/.test(trimmedValue); // Ensure only digits
   if (!isNumeric) return 'Contact should contain only numbers.';
   return trimmedValue.length == length || `Contact should be exactly ${length} digits.`;
@@ -115,7 +108,6 @@ const exactLength = (value: string, [length]: [number]) => {
 defineRule('required', required)
 defineRule('email', email)
 defineRule('min', min)
-defineRule('customEmail', customEmail)
 defineRule('lettersOnly', lettersOnly)
 defineRule('exactLength', exactLength)
 
