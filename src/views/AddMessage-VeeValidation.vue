@@ -16,7 +16,7 @@
         <Field
             id="name"
             v-model="formData.name"
-            as="input"
+            as="InputText"
             name="name"
             placeholder="Your Name"
             rules="required|min:2|lettersOnly"
@@ -29,7 +29,7 @@
         <Field
             id="email"
             v-model="formData.email"
-            as="input"
+            as="InputText"
             name="email"
             placeholder="Your Email"
             rules="required|email"
@@ -43,7 +43,7 @@
         <Field
             id="contact"
             v-model="formData.contact"
-            as="input"
+            as="InputText"
             name="contact"
             placeholder="Your Contact"
             rules="required|exactLength:10"
@@ -56,10 +56,11 @@
         <Field
             id="address"
             v-model="formData.address"
-            as="input"
+            as="InputText"
             name="address"
             placeholder="Your Address"
             rules="required|min:3"
+
         />
         <ErrorMessage class="error" name="address" />
       </div>
@@ -69,7 +70,7 @@
         <Field
             id="message"
             v-model="formData.message"
-            as="textarea"
+            as="TextArea"
             name="message"
             placeholder="Your Message"
             rows="4"
@@ -90,6 +91,7 @@ import { required, email, min } from '@vee-validate/rules'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
+import Textarea from "primevue/textarea";
 
 // Custom name rule to check for letters only (no numbers or special characters)
 const lettersOnly = (value: string) => {
@@ -99,9 +101,9 @@ const lettersOnly = (value: string) => {
 
 // Custom contact rule to check for exactly 10 digits
 const exactLength = (value: string, [length]: [number]) => {
-  const isNumeric = /^[0-9]+$/.test(trimmedValue); // Ensure only digits
+  const isNumeric = /^[0-9]+$/.test(value); // Ensure only digits
   if (!isNumeric) return 'Contact should contain only numbers.';
-  return trimmedValue.length == length || `Contact should be exactly ${length} digits.`;
+  return value.length == length || `Contact should be exactly ${length} digits.`;
 };
 
 // Register validation rules
