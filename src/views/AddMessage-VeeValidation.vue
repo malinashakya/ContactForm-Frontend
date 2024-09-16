@@ -47,10 +47,10 @@
         <Field
             id="email"
             v-model="formData.email"
+            :rules="emailRules"
             as="InputText"
             name="email"
             placeholder="Your Email"
-            rules="required|email"
             type="email"
         />
         <ErrorMessage class="error" name="email"/>
@@ -61,10 +61,10 @@
         <Field
             id="contact"
             v-model="formData.contact"
+            :rules="contactRules"
             as="InputText"
             name="contact"
             placeholder="Your Contact"
-            rules="required|exactLength:10"
         />
         <ErrorMessage class="error" name="contact"/>
       </div>
@@ -103,13 +103,21 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted, reactive} from 'vue'
+import {onMounted, reactive, computed} from 'vue'
 import {Form, Field, ErrorMessage, defineRule, configure} from 'vee-validate'
 import {required, email, min} from '@vee-validate/rules'
 import axios from 'axios'
 import {useRouter} from 'vue-router'
 import Button from 'primevue/button'
 import Textarea from "primevue/textarea";
+
+const emailRules = computed(() => {
+  return formData.contactVia === 'Email' ? 'required|email' : '';
+});
+
+const contactRules = computed(() => {
+  return formData.contactVia === 'Phone' ? 'required|exactLength:10' : '';
+});
 
 // Custom name rule to check for letters only (no numbers or special characters)
 const lettersOnly = (value: string) => {
@@ -129,7 +137,12 @@ defineRule('required', required)
 defineRule('email', email)
 defineRule('min', min)
 defineRule('lettersOnly', lettersOnly)
-defineRule('exactLength', exactLength)
+// Register custom rule
+defineRule('exactLength', (value: string, [length]: [number]) => {
+  const isNumeric = /^[0-9]+$/.test(value); // Ensure only digits
+  return isNumeric && value.length === length || `Contact should be exactly ${length} digits.`;
+});
+
 
 // Configure VeeValidate for customized messages
 configure({
@@ -188,7 +201,7 @@ const handleSubmit = async () => {
 const router = useRouter()
 
 const navigateToViewContact = () => {
-  router.push({name: 'viewcontact'})
+  router.push({name: 'contactview'})
 }
 
 onMounted(() => {
