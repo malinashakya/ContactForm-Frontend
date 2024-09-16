@@ -46,7 +46,7 @@
           <Field
               id="name"
               v-model="editedContact.name"
-              as="input"
+              as="InputText"
               name="name"
               placeholder="Your Name"
               rules="required|min:3"
@@ -77,10 +77,10 @@
           <Field
               id="email"
               v-model="editedContact.email"
-              as="input"
+              :rules="emailRules"
+              as="InputText"
               name="email"
               placeholder="Your Email"
-              rules="required|email"
               type="email"
           />
           <ErrorMessage class="error" name="email"/>
@@ -91,10 +91,10 @@
           <Field
               id="contact"
               v-model="editedContact.contact"
-              as="input"
+              :rules="contactRules"
+              as="InputText"
               name="contact"
               placeholder="Your Contact"
-              rules="required|min:10"
           />
           <ErrorMessage class="error" name="contact"/>
         </div>
@@ -104,7 +104,7 @@
           <Field
               id="address"
               v-model="editedContact.address"
-              as="input"
+              as="InputText"
               name="address"
               placeholder="Your Address"
               rules="required"
@@ -117,7 +117,7 @@
           <Field
               id="message"
               v-model="editedContact.message"
-              as="textarea"
+              as="TextArea"
               name="message"
               placeholder="Your Message"
               rows="4"
@@ -145,18 +145,48 @@
 </template>
 
 <script lang="ts" setup>
-import {ref, onMounted, reactive} from 'vue';
+import {ref, onMounted, reactive, computed} from 'vue';
 import axios from 'axios';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Dialog from 'primevue/dialog';
 import {ErrorMessage, Field, Form, defineRule, configure} from 'vee-validate';
 import {required, email, min} from '@vee-validate/rules';
+import Textarea from "primevue/textarea";
+
+//THis becomes active only if contactVia is Email, i.e. Email's validation is active
+const emailRules = computed(() => {
+  return editedContact.value?.contactVia === 'Email' ? 'required|email' : '';
+});
+
+//THis becomes active only if contactVia is Phone, i.e. Contact's validation is active
+const contactRules = computed(() => {
+  return editedContact.value?.contactVia === 'Phone' ? 'required|exactLength:10' : '';
+});
+
+// Custom name rule to check for letters only (no numbers or special characters)
+const lettersOnly = (value: string) => {
+  const nameRegex = /^[a-zA-Z\s]+$/
+  return nameRegex.test(value) || 'Name should contain only letters.'
+}
+
+// Custom contact rule to check for exactly 10 digits
+const exactLength = (value: string, [length]: [number]) => {
+  const isNumeric = /^[0-9]+$/.test(value); // Ensure only digits
+  if (!isNumeric) return 'Contact should contain only numbers.';
+  return value.length == length || `Contact should be exactly ${length} digits.`;
+};
+
 
 // Define validation rules
 defineRule('required', required);
 defineRule('email', email);
 defineRule('min', min);
+defineRule('lettersOnly', lettersOnly)
+defineRule('exactLength', (value: string, [length]: [number]) => {
+  const isNumeric = /^[0-9]+$/.test(value); // Ensure only digits
+  return isNumeric && value.length == length || `Contact should be exactly ${length} digits.`;
+});
 
 // Define types for the contact data
 interface Contact {
@@ -166,8 +196,24 @@ interface Contact {
   contact: string;
   email: string;
   message: string;
-  contactvia:'Email'|'Phone';
+  contactvia: 'Email' | 'Phone';
 }
+
+// Configure VeeValidate for customized messages
+configure({
+  validateOnInput: true, // Enables real-time validation
+  generateMessage: (context) => {
+    const fieldName = context.field
+    const messages = {
+      required: `${fieldName} is required.`,
+      min: `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} should be at least ${context.rule?.params[0]} characters.`,
+      email: 'Email must be valid and contain "@" and "."',
+      lettersOnly: 'Name should contain only letters.',
+      exactLength: 'Contact should be exactly 10 digits long.'
+    }
+    return messages[context.rule?.name] || `Invalid ${fieldName}.`
+  }
+})
 
 // Refs to hold contact details, loading state, and dialog state
 const contacts = ref<Contact[]>([]);
@@ -282,8 +328,7 @@ onMounted(() => {
   outline: 2px solid #1abc9c;
 }
 
-button,
-.p-button {
+button{
   padding: 0.7rem 1.5rem;
   border: none;
   border-radius: 4px;
@@ -294,8 +339,7 @@ button,
   transition: background-color 0.3s;
 }
 
-button:hover,
-.p-button:hover {
+button:hover{
   background: dodgerblue;
 }
 

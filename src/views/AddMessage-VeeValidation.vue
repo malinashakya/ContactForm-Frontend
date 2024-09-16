@@ -96,7 +96,6 @@
         />
         <ErrorMessage class="error" name="message"/>
       </div>
-
       <Button type="submit">Send Message</Button>
     </Form>
   </section>
@@ -111,10 +110,12 @@ import {useRouter} from 'vue-router'
 import Button from 'primevue/button'
 import Textarea from "primevue/textarea";
 
+//THis becomes active only if contactVia is Email, i.e. Email's validation is active
 const emailRules = computed(() => {
   return formData.contactVia === 'Email' ? 'required|email' : '';
 });
 
+//THis becomes active only if contactVia is Phone, i.e. Contact's validation is active
 const contactRules = computed(() => {
   return formData.contactVia === 'Phone' ? 'required|exactLength:10' : '';
 });
@@ -137,12 +138,11 @@ defineRule('required', required)
 defineRule('email', email)
 defineRule('min', min)
 defineRule('lettersOnly', lettersOnly)
-// Register custom rule
+// Register custom rule for Contact
 defineRule('exactLength', (value: string, [length]: [number]) => {
   const isNumeric = /^[0-9]+$/.test(value); // Ensure only digits
-  return isNumeric && value.length === length || `Contact should be exactly ${length} digits.`;
+  return isNumeric && value.length ==length || `Contact should be exactly ${length} digits.`;
 });
-
 
 // Configure VeeValidate for customized messages
 configure({
