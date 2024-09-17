@@ -77,7 +77,7 @@
 
         <div class="form-group p-mb-4">
           <label for="contact">Contact<span class="required">*</span></label>
-          <Field v-slot="{ field, errorMessage }" v-model="editedContact.contact" :rules="contactRules" name="contact">
+          <Field  v-model="editedContact.contact" :rules="contactRules" name="contact">
             <InputText placeholder="Your Contact" v-bind="field"/>
           </Field>
           <ErrorMessage class="error" name="contact"/>
