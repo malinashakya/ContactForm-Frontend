@@ -1,6 +1,5 @@
 <template>
   <section class="contact">
-    <!-- Greeting Section -->
     <div class="greet">
       <Button class="view-contact-button" @click="navigateToViewContact">
         View Contact
@@ -9,93 +8,62 @@
       <h3>Let's Greet and Meet.</h3>
     </div>
 
-    <!-- Contact Form Section -->
     <Form class="contact-form" @submit="handleSubmit">
       <div class="form-group p-mb-4">
         <label for="name">Name<span class="required">*</span></label>
-        <Field
-            id="name"
-            v-model="formData.name"
-            as="InputText"
-            name="name"
-            placeholder="Your Name"
-            rules="required|min:2|lettersOnly"
-        />
+        <Field v-slot="{ field, errorMessage }" name="name" rules="required|min:2|lettersOnly">
+          <InputText v-model="formData.name" placeholder="Your Name" v-bind="field"/>
+        </Field>
         <ErrorMessage class="error" name="name"/>
       </div>
 
-      <!-- Dropdown for selecting contact via -->
       <div class="form-group p-mb-4">
         <label for="contactVia">Contact Via<span class="required">*</span></label>
-        <Field
-            id="contactVia"
-            v-model="formData.contactVia"
-            as="Select"
-            name="contactVia"
-            rules="required"
-        >
-          <option value="">Select...</option>
-          <option v-for="option in contactViaOptions" :key="option" :value="option">
-            {{ option }}
-          </option>
+        <Field v-slot="{ field, errorMessage }" name="contactVia" rules="required">
+          <Select
+              id="contactVia"
+              v-model="formData.contactVia"
+              :options="contactViaOptions"
+              placeholder="Select Contact Method"
+              v-bind="field"
+          />
         </Field>
         <ErrorMessage class="error" name="contactVia"/>
       </div>
 
+
       <div class="form-group p-mb-4">
         <label for="email">Email<span class="required">*</span></label>
-        <Field
-            id="email"
-            v-model="formData.email"
-            :rules="emailRules"
-            as="InputText"
-            name="email"
-            placeholder="Your Email"
-            type="email"
-        />
+        <Field v-slot="{ field, errorMessage }" :rules="emailRules" name="email">
+          <InputText v-model="formData.email" placeholder="Your Email" type="email" v-bind="field"/>
+        </Field>
         <ErrorMessage class="error" name="email"/>
       </div>
 
       <div class="form-group p-mb-4">
         <label for="contact">Contact<span class="required">*</span></label>
-        <Field
-            id="contact"
-            v-model="formData.contact"
-            :rules="contactRules"
-            as="InputText"
-            name="contact"
-            placeholder="Your Contact"
-        />
+        <Field v-slot="{ field, errorMessage }" :rules="contactRules" name="contact">
+          <InputText v-model="formData.contact" placeholder="Your Contact" v-bind="field"/>
+        </Field>
         <ErrorMessage class="error" name="contact"/>
       </div>
 
       <div class="form-group p-mb-4">
         <label for="address">Address<span class="required">*</span></label>
-        <Field
-            id="address"
-            v-model="formData.address"
-            as="InputText"
-            name="address"
-            placeholder="Your Address"
-            rules="required|min:3"
-
-        />
+        <Field v-slot="{ field, errorMessage }" name="address" rules="required|min:3">
+          <InputText v-model="formData.address" placeholder="Your Address" v-bind="field"/>
+        </Field>
         <ErrorMessage class="error" name="address"/>
       </div>
 
       <div class="form-group p-mb-4">
         <label for="message">Message<span class="required">*</span></label>
-        <Field
-            id="message"
-            v-model="formData.message"
-            as="TextArea"
-            name="message"
-            placeholder="Your Message"
-            rows="4"
-            rules="required|min:10"
-        />
+        <Field v-slot="{ field, errorMessage }" name="message" rules="required|min:10">
+          <Textarea v-model="formData.message" placeholder="Your Message" rows="4" v-bind="field"/>
+        </Field>
         <ErrorMessage class="error" name="message"/>
       </div>
+
       <Button type="submit">Send Message</Button>
     </Form>
   </section>
@@ -109,6 +77,7 @@ import axios from 'axios'
 import {useRouter} from 'vue-router'
 import Button from 'primevue/button'
 import Textarea from "primevue/textarea";
+import Select from "primevue/select";
 
 //THis becomes active only if contactVia is Email, i.e. Email's validation is active
 const emailRules = computed(() => {
@@ -141,7 +110,7 @@ defineRule('lettersOnly', lettersOnly)
 // Register custom rule for Contact
 defineRule('exactLength', (value: string, [length]: [number]) => {
   const isNumeric = /^[0-9]+$/.test(value); // Ensure only digits
-  return isNumeric && value.length ==length || `Contact should be exactly ${length} digits.`;
+  return isNumeric && value.length == length || `Contact should be exactly ${length} digits.`;
 });
 
 // Configure VeeValidate for customized messages
@@ -201,7 +170,7 @@ const handleSubmit = async () => {
 const router = useRouter()
 
 const navigateToViewContact = () => {
-  router.push({name: 'contactview'})
+  router.push({name: 'primecontactview'})
 }
 
 onMounted(() => {
@@ -244,28 +213,12 @@ onMounted(() => {
   text-align: left;
 }
 
-.form-group label {
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-  color: #ecf0f1;
-}
-
-.form-group input,
-.form-group textarea {
-  padding: 0.5rem;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  color: #333;
-  background: whitesmoke;
-}
-
 .form-group input:focus,
 .form-group textarea:focus {
   outline: 2px solid #1abc9c;
 }
 
-button{
+button {
   padding: 0.7rem 1.5rem;
   border: none;
   border-radius: 4px;
@@ -331,7 +284,3 @@ button:hover {
   }
 }
 </style>
-
-
-
-

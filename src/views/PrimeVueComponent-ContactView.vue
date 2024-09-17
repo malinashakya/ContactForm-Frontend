@@ -14,7 +14,7 @@
         <Column class="p-2" field="contact" header="Contact"></Column>
         <Column class="p-2" field="contactVia" header="Contact Via"></Column>
         <Column class="p-2" field="email" header="Email"></Column>
-        <Column class="p-2 " field="message" header="Message"></Column>
+        <Column class="p-2" field="message" header="Message"></Column>
         <Column class="p-2" header="Action">
           <template #body="slotProps">
             <!-- Button to open the edit dialog for a contact -->
@@ -32,114 +32,84 @@
       </DataTable>
     </div>
 
-
     <!-- Edit Dialog -->
-    <!-- This dialog appears when showEditDialog is true -->
     <Dialog v-model:visible="showEditDialog"
-            :style="{ width: '30vw', background:'grey', padding:'10px',border: '1px solid grey' } "
+            :style="{ width: '30vw', background:'grey', padding:'10px',border: '1px solid grey' }"
             header="Edit Contact"
             modal>
-      <!-- Form to update contact details -->
       <Form class="contact-form" @submit="updateContact">
+        <!-- Name field using InputText -->
         <div class="form-group p-mb-4">
           <label for="name">Name<span class="required">*</span></label>
-          <Field
-              id="name"
-              v-model="editedContact.name"
-              as="InputText"
-              name="name"
-              placeholder="Your Name"
-              rules="required|min:3"
-          />
-          <ErrorMessage class="error" name="name"/>
+          <Field name="name" rules="required|min:3" v-slot="{ field, errorMessage }">
+            <InputText id="name" v-bind="field" v-model="editedContact.name" placeholder="Your Name" />
+          </Field>
+          <ErrorMessage name="name" class="error"/>
         </div>
 
-        <!-- Dropdown for selecting contact via -->
+        <!-- Dropdown for selecting contact via using PrimeVue Select -->
         <div class="form-group p-mb-4">
           <label for="contactVia">Contact Via<span class="required">*</span></label>
-          <Field
-              id="contactVia"
-              v-model="editedContact.contactVia"
-              as="select"
-              name="contactVia"
-              rules="required"
-          >
-            <option value="">Select...</option>
-            <option v-for="option in contactViaOptions" :key="option" :value="option">
-              {{ option }}
-            </option>
+          <Field name="contactVia" rules="required" v-slot="{ field, errorMessage }">
+            <Select
+                id="contactVia"
+                v-bind="field"
+                v-model="editedContact.contactVia"
+                :options="contactViaOptions"
+                placeholder="Select Contact Method"
+            />
           </Field>
-          <ErrorMessage class="error" name="contactVia"/>
+          <ErrorMessage name="contactVia" class="error"/>
         </div>
 
+        <!-- Email field using InputText with dynamic validation -->
         <div class="form-group p-mb-4">
           <label for="email">Email<span class="required">*</span></label>
-          <Field
-              id="email"
-              v-model="editedContact.email"
-              :rules="emailRules"
-              as="InputText"
-              name="email"
-              placeholder="Your Email"
-              type="email"
-          />
-          <ErrorMessage class="error" name="email"/>
+          <Field name="email" :rules="emailRules" v-slot="{ field, errorMessage }">
+            <InputText id="email" v-bind="field" v-model="editedContact.email" placeholder="Your Email" type="email" />
+          </Field>
+          <ErrorMessage name="email" class="error"/>
         </div>
 
+        <!-- Contact field using InputText with dynamic validation -->
         <div class="form-group p-mb-4">
           <label for="contact">Contact<span class="required">*</span></label>
-          <Field
-              id="contact"
-              v-model="editedContact.contact"
-              :rules="contactRules"
-              as="InputText"
-              name="contact"
-              placeholder="Your Contact"
-          />
-          <ErrorMessage class="error" name="contact"/>
+          <Field name="contact" :rules="contactRules" v-slot="{ field, errorMessage }">
+            <InputText id="contact" v-bind="field" v-model="editedContact.contact" placeholder="Your Contact" />
+          </Field>
+          <ErrorMessage name="contact" class="error"/>
         </div>
 
+        <!-- Address field using InputText -->
         <div class="form-group p-mb-4">
           <label for="address">Address<span class="required">*</span></label>
-          <Field
-              id="address"
-              v-model="editedContact.address"
-              as="InputText"
-              name="address"
-              placeholder="Your Address"
-              rules="required"
-          />
-          <ErrorMessage class="error" name="address"/>
+          <Field name="address" rules="required" v-slot="{ field, errorMessage }">
+            <InputText id="address" v-bind="field" v-model="editedContact.address" placeholder="Your Address" />
+          </Field>
+          <ErrorMessage name="address" class="error"/>
         </div>
 
+        <!-- Message field using TextArea -->
         <div class="form-group p-mb-4">
           <label for="message">Message<span class="required">*</span></label>
-          <Field
-              id="message"
-              v-model="editedContact.message"
-              as="TextArea"
-              name="message"
-              placeholder="Your Message"
-              rows="4"
-              rules="required|min:10"
-          />
-          <ErrorMessage class="error" name="message"/>
+          <Field name="message" rules="required|min:10" v-slot="{ field, errorMessage }">
+            <Textarea id="message" v-bind="field" v-model="editedContact.message" rows="4" placeholder="Your Message" />
+          </Field>
+          <ErrorMessage name="message" class="error"/>
         </div>
 
+        <!-- Submit and Cancel buttons -->
         <Button class="button p-2 m-2"
                 style="background: #eded07; border: 1px solid rgba(244,244,73,0.89); border-radius: 3px " type="submit">
           Submit
         </Button>
-        <!-- Button to close the dialog without making changes -->
-        <Button class="button p-2 m-2 " style="background: red; border: 1px solid #e35555; border-radius: 3px"
-                @click="closeEditDialog">
+        <Button class="button p-2 m-2" style="background: red; border: 1px solid #e35555; border-radius: 3px" @click="closeEditDialog">
           Cancel
         </Button>
 
+        <!-- Success message -->
+        <div v-if="updateSuccess" class="success-message mt-2">{{ updateSuccess }}</div>
       </Form>
-
-      <!-- Show success message if the contact was updated successfully -->
-      <div v-if="updateSuccess" class="success-message mt-2">{{ updateSuccess }}</div>
     </Dialog>
   </div>
 </template>
@@ -267,13 +237,10 @@ const updateContact = async () => {
     try {
       // Make a PUT request to update the contact
       await axios.put(`/api/contacts/${editedContact.value.id}`, editedContact.value);
-
       // Update the contact list with the new data
       contacts.value = contacts.value.map(contact =>
           contact.id === editedContact.value!.id ? editedContact.value! : contact
       );
-      console.log('Updating contact with contactVia:', editedContact.value.contactVia);
-      console.log('Edited Contact:', editedContact.value);
       updateSuccess.value = 'Contact updated successfully!'; // Set success message
     } catch (err) {
       error.value = 'Failed to update contact.'; // Set error message if update fails
@@ -302,6 +269,7 @@ onMounted(() => {
   fetchContactViaOptions()
 })
 </script>
+
 
 <style scoped>
 .form-group {
