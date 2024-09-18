@@ -86,21 +86,8 @@ import {integer, required} from '@vee-validate/rules'
 import Button from "primevue/button";
 import axios from "axios";
 
-// Define rules
-const integerOnlyRules = 'required|integer';
-const decimalRules = 'required|decimal';
-
 // Register validation rules
 defineRule('required', required)
-defineRule('integer', integer)
-
-
-// Custom decimal rule for validation
-defineRule("decimal", value => {
-  if (!value) return true;
-  const decimalRegex = /^\d+(\.\d+)?$/;
-  return decimalRegex.test(value) || "The field must be a decimal.";
-});
 
 // Form Data
 const formData = reactive({
