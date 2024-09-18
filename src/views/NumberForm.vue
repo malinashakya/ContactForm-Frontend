@@ -37,7 +37,7 @@
 
         <div class="flex-column font-bold block mb-2">
           <label class="font-bold block mb-2" for="horizontal-buttons"> Horizontal with Step </label>
-          <Field v-slot="{field,errorMessage}" name="horizontal_with_step" rules="required">
+          <Field v-slot="{field}" name="horizontal_with_step" rules="required">
             <InputNumber v-model="formData.horizontal_with_step" :step="0.25" buttonLayout="horizontal" currency="EUR"
                          inputId="horizontal-buttons" mode="currency" showButtons
                          @blur="field.onBlur"
@@ -56,7 +56,7 @@
 
         <div class="flex-column font-bold block mb-2">
           <label class="font-bold block mb-2" for="vertical-buttons"> Vertical with Step </label>
-          <Field v-slot="{field,errorMessage}" name="vertical_with_step" rules="required">
+          <Field v-slot="{field}" name="vertical_with_step" rules="required">
             <InputNumber v-model="formData.vertical_with_step" :max="99" :min="0" buttonLayout="vertical" showButtons
                          style="width: 3rem" @blur="field.onBlur"
                          @input="field.onInput"

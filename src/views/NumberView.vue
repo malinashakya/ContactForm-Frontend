@@ -1,21 +1,22 @@
 <template>
   <div>
     <h2>Number Data</h2>
-    <div v-if="loading">Loading....</div>
+
+    <!-- Display loading message while data is being fetched -->
+    <div v-if="loading">Loading...</div>
+
+    <!-- Display error message if there is an issue fetching data -->
     <div v-if="error">{{ error }}</div>
+
+    <!-- Display table only if data is loaded and no errors occurred -->
     <div class="p-d-flex p-flex-column p-ai-center p-4">
-      <DataTable
-          v-if="!loading && !error"
-          :value="numbers"
-          show-gridlines
-          table-style="min-width:400px"
-      >
-        <Column class="p-3" field="id" header="ID"></Column>
-        <Column class="p-3" field="intnum" header="Integer Num"></Column>
-        <Column class="p-3" field="doublenum" header="Double Num"></Column>
-        <Column class="p-3" field="horizontal_with_step" header="Horizontal Step"></Column>
-        <Column class="p-3" field="vertical_with_step" header="Vertical Step"></Column>
-        <Column class="p-3" header="Action">
+      <DataTable v-if="!loading && !error" :value="numbers" showGridlines tableStyle="min-width: 400px">
+        <Column field="id" header="ID"></Column>
+        <Column field="intnum" header="Integer Num"></Column>
+        <Column field="doublenum" header="Double Num"></Column>
+        <Column field="horizontal_with_step" header="Horizontal Step"></Column>
+        <Column field="vertical_with_step" header="Vertical Step"></Column>
+        <Column header="Action">
           <template #body="slotProps">
             <Button
                 class="m-2 p-2"
@@ -36,60 +37,50 @@
       </DataTable>
     </div>
 
-    <!-- Edit Dialog Box -->
-    <Dialog
-        v-model:visible="showEditDialog"
-        :style="{ width: '30vw', background: 'grey', padding: '12px', border: '1px solid grey' }"
-        header="Edit Number"
-
-    >
-      <Form v-if="editedNumber" class="number-form" @submit="handleSubmit">
-        <div class="card flex flex-wrap gap-4">
+    <!-- Edit Dialog using PrimeVue Dialog component -->
+    <Dialog v-model:visible="showEditDialog" :style="{ width: '30vw', background: 'grey', padding: '12px', border: '1px solid grey' }" header="Edit Number">
+      <Form @submit="handleSubmit" v-slot="{ errors }">
+        <div class="flex flex-wrap gap-4">
           <div class="flex-column font-bold block mb-2">
-            <label class="font-bold block mb-2" for="intnum">Integer Only</label>
-            <Field v-slot="{ field }" name="intnum" rules="required">
+            <label for="intnum" class="font-bold">Integer Num</label>
+            <Field name="intnum" v-model="editedNumber.intnum" rules="required">
               <InputNumber
+                  id="intnum"
                   v-model="editedNumber.intnum"
                   fluid
-                  placeholder="Enter Integer number"
-                  @blur="field.onBlur"
-                  @input="field.onInput"
+                  placeholder="Enter integer number"
               />
-              <ErrorMessage class="error" name="intnum"/>
+              <ErrorMessage name="intnum" class="error"/>
             </Field>
           </div>
 
           <div class="flex-column font-bold block mb-2">
-            <label class="font-bold block mb-2" for="decimal">Decimal</label>
-            <Field v-slot="{ field }" name="doublenum" rules="required">
+            <label for="doublenum" class="font-bold">Decimal</label>
+            <Field name="doublenum" v-model="editedNumber.doublenum" rules="required">
               <InputNumber
+                  id="doublenum"
                   v-model="editedNumber.doublenum"
                   :minFractionDigits="2"
                   fluid
-                  inputId="locale-us"
                   locale="en-US"
                   placeholder="Enter decimal value"
-                  @blur="field.onBlur"
-                  @input="field.onInput"
               />
-              <ErrorMessage class="error" name="doublenum"/>
+              <ErrorMessage name="doublenum" class="error"/>
             </Field>
           </div>
 
           <div class="flex-column font-bold block mb-2">
-            <label class="font-bold block mb-2" for="horizontal-buttons">Horizontal with Step</label>
-            <Field v-slot="{ field }" name="horizontal_with_step" rules="required">
+            <label for="horizontal_with_step" class="font-bold">Horizontal with Step</label>
+            <Field name="horizontal_with_step" v-model="editedNumber.horizontal_with_step" rules="required">
               <InputNumber
+                  id="horizontal_with_step"
                   v-model="editedNumber.horizontal_with_step"
                   :step="0.25"
                   buttonLayout="horizontal"
-                  currency="EUR"
-                  inputId="horizontal-buttons"
                   mode="currency"
+                  currency="EUR"
                   placeholder="Horizontal Increment"
                   showButtons
-                  @blur="field.onBlur"
-                  @input="field.onInput"
               >
                 <template #incrementbuttonicon>
                   <span class="pi pi-plus"/>
@@ -98,23 +89,22 @@
                   <span class="pi pi-minus"/>
                 </template>
               </InputNumber>
-              <ErrorMessage class="error" name="horizontal_with_step"/>
+              <ErrorMessage name="horizontal_with_step" class="error"/>
             </Field>
           </div>
 
           <div class="flex-column font-bold block mb-2">
-            <label class="font-bold block mb-2" for="vertical-buttons">Vertical with Step</label>
-            <Field v-slot="{ field }" name="vertical_with_step" rules="required">
+            <label for="vertical_with_step" class="font-bold">Vertical with Step</label>
+            <Field name="vertical_with_step" v-model="editedNumber.vertical_with_step" rules="required">
               <InputNumber
+                  id="vertical_with_step"
                   v-model="editedNumber.vertical_with_step"
-                  :max="99"
+                  :step="1"
                   :min="0"
+                  :max="99"
                   buttonLayout="vertical"
                   placeholder="Vertical Increment"
                   showButtons
-                  style="width: 3rem"
-                  @blur="field.onBlur"
-                  @input="field.onInput"
               >
                 <template #incrementbuttonicon>
                   <span class="pi pi-plus"/>
@@ -123,34 +113,40 @@
                   <span class="pi pi-minus"/>
                 </template>
               </InputNumber>
-              <ErrorMessage class="error" name="vertical_with_step"/>
+              <ErrorMessage name="vertical_with_step" class="error"/>
             </Field>
           </div>
         </div>
 
-        <Button type="submit">Update Number</Button>
+        <div class="flex justify-content-center gap-3 mt-4">
+          <Button type="button" label="Cancel" severity="secondary" @click="closeEditDialog"></Button>
+          <Button type="submit" label="Update Number"></Button>
+        </div>
       </Form>
+
+      <!-- Display success message if update is successful -->
       <div v-if="updateSuccess" class="success-message mt-2">{{ updateSuccess }}</div>
     </Dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {configure, defineRule, ErrorMessage, Field, Form} from "vee-validate";
-import InputNumber from "primevue/inputnumber";
-import Button from "primevue/button";
-import {ref, onMounted} from "vue";
-import axios from "axios";
-import {required} from '@vee-validate/rules';
+import { ref, onMounted } from 'vue';
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import { required, numeric } from '@vee-validate/rules';
+import { defineRule, configure } from 'vee-validate';
+import axios from 'axios';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import Button from 'primevue/button';
+import InputNumber from 'primevue/inputnumber';
 import Dialog from 'primevue/dialog';
 
-// Register validation rules
-defineRule('required', required)
+// Define and register validation rules
+defineRule('required', required);
 
-//Real-time validation
-configure({
-  validateOnInput: true
-});
+// Real-time validation configuration
+configure({ validateOnInput: true });
 
 // Define the interface for the number type
 interface NumberData {
@@ -160,10 +156,6 @@ interface NumberData {
   horizontal_with_step: number;
   vertical_with_step: number;
 }
-
-configure({
-  validateOnInput: true
-});
 
 const numbers = ref<NumberData[]>([]);
 const loading = ref(true);
@@ -187,7 +179,7 @@ onMounted(async () => {
 
 // Open the edit dialog
 const openEditDialog = (number: NumberData) => {
-  editedNumber.value = {...number};
+  editedNumber.value = { ...number };
   showEditDialog.value = true;
 };
 
@@ -198,7 +190,7 @@ const closeEditDialog = () => {
   updateSuccess.value = null;
 };
 
-// Update number details
+// Handle form submission
 const handleSubmit = async () => {
   if (editedNumber.value) {
     try {
@@ -227,3 +219,16 @@ const deleteNumber = async (id: number) => {
   }
 };
 </script>
+
+<style scoped>
+.error {
+  color: red;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+.success-message {
+  color: green;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+</style>
