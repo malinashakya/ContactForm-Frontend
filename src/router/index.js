@@ -7,6 +7,7 @@ import ContactView from "@/views/ContactView-VeeValidation.vue";
 import PrimeVueComponentAddMessage from "@/views/PrimeVueComponent-AddMessage.vue";
 import PrimeVueComponentContactView from "@/views/PrimeVueComponent-ContactView.vue";
 import NumberForm from "@/views/NumberForm.vue";
+import NumberView from "@/views/NumberView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,6 +46,11 @@ const router = createRouter({
       path: '/numberform',
       name: 'numberform',
       component: NumberForm,
+    },
+    {
+      path: '/numberview',
+      name: 'numberview',
+      component: NumberView,
     },
   ],
 })
