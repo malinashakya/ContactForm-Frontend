@@ -58,7 +58,7 @@ configure({
   <Form class="form-grid" @submit="handleSubmit">
 
     <!-- Name Field -->
-    <div class="form-row d-contents">
+    <div class="form-row">
       <label for="name" class="label">Nammmmmmmmmmmmmmmmeeeeeeeeeee</label>
       <div class="form-field">
         <Field v-slot="{ field }" name="name" rules="required|min:2|lettersOnly">

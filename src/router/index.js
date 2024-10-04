@@ -10,6 +10,7 @@ import NumberForm from "@/views/NumberForm.vue";
 import NumberView from "@/views/NumberView.vue";
 import DynamicAlignment from "@/views/DynamicAlignment.vue";
 import DynamicAlignmentFormVeeValidation from "@/views/DynamicAlignmentFormVeeValidation.vue";
+import SidebySideFields from "@/views/SidebySideFields.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -63,6 +64,11 @@ const router = createRouter({
       path: '/dynamicalignmentform',
       name: 'dynamicalignmentform',
       component: DynamicAlignmentFormVeeValidation,
+    },
+    {
+      path: '/sidebysidefields',
+      name: 'sidebysidefields',
+      component: SidebySideFields,
     },
   ],
 })
