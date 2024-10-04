@@ -8,6 +8,7 @@ import PrimeVueComponentAddMessage from "@/views/PrimeVueComponent-AddMessage.vu
 import PrimeVueComponentContactView from "@/views/PrimeVueComponent-ContactView.vue";
 import NumberForm from "@/views/NumberForm.vue";
 import NumberView from "@/views/NumberView.vue";
+import DynamicAlignment from "@/views/DynamicAlignment.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,6 +52,11 @@ const router = createRouter({
       path: '/numberview',
       name: 'numberview',
       component: NumberView,
+    },
+    {
+      path: '/dynamicalignment',
+      name: 'dynamicalignment',
+      component: DynamicAlignment,
     },
   ],
 })

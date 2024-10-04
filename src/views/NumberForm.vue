@@ -105,6 +105,8 @@ const handleSubmit = async () => {
 
     // Clear form data after successful submission
     Object.keys(formData).forEach(key => (formData[key] = null));
+    alert('Form submitted successfully!');
+
   } catch (error) {
     console.error('Error sending message:', error);
     alert('An error occurred while sending your message. Please try again.');
