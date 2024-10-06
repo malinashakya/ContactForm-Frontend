@@ -1,119 +1,108 @@
-<script setup>
-import {configure, defineRule, ErrorMessage, Field, Form} from "vee-validate";
-import Button from "primevue/button";
-import {integer, min, regex, required} from '@vee-validate/rules';
-import {computed} from "vue";
-
-const handleSubmit = () => {
-  console.log("Form submitted");
-};
-
-// Define rules
-defineRule('required', required);
-defineRule('min', min);
-defineRule('integer', integer);
-defineRule('regex', regex);
-
-defineRule('phone', (value) => {
-  const phonePattern = /^\d{10}$/;
-  if (!phonePattern.test(value)) {
-    return "Contact must be 10 digit number.";
-  }
-  return true;
-});
-
-defineRule('lettersOnly', (value) => {
-      const strings = /^[A-Za-z]+$/;
-      if (!strings.test(value)) {
-        return "Must be letters only";
-      }
-      return true;
-    }
-)
-
-defineRule('age', (value) => {
-  if (value < 1 || value > 120) {
-    return "Age must be between 1 and 120";
-  }
-  return true;
-})
-// Customized messages
-configure({
-  validateOnInput: true,
-  generateMessage: (context) => {
-    const fieldName = context.field;
-    const message = {
-      required: `${fieldName} is required.`,
-      min: `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} should be at least ${context.rule?.params[0]} characters.`,
-      integer: `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} should be numbers only`
-    };
-    return message[context.rule?.name] || `Invalid ${fieldName}.`;
-  },
-});
-
-</script>
-
 <template>
-  <Form class="p-fluid grid form-grid" @submit="handleSubmit">
+  <Form @submit="handleSubmit">
+    <!-- Row 1: Name and Address -->
+    <div class="form-grid">
+      <!-- Name Field -->
+      <div class="field-group">
+        <label for="name" class="label">Name</label>
+        <div>
+          <Field name="name" rules="required|min:2|lettersOnly" v-slot="{ field }">
+            <InputText id="name" class="input-field" v-bind="field" placeholder="Name" />
+          </Field>
+          <ErrorMessage name="name" class="p-error" />
+        </div>
+      </div>
 
-    <!-- Name Field (Column 1) -->
-    <div class="col-6 column1 ">
-      <label class="label" for="name">Nameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</label>
-      <Field v-slot="{ field }" name="name" rules="required|min:2|lettersOnly">
-        <InputText id="address" class="w-4.5 ml-3" placeholder="Name" v-bind="field"/>
-      </Field>
-      <div>
-        <ErrorMessage class="p-error " name="name"/>
+      <!-- Address Field -->
+      <div class="field-group">
+        <label for="address" class="label">Address</label>
+        <div>
+          <Field name="address" rules="required|min:2" v-slot="{ field }">
+            <InputText id="address" class="input-field" v-bind="field" placeholder="Address" />
+          </Field>
+          <ErrorMessage name="address" class="p-error" />
+        </div>
       </div>
     </div>
 
-    <!-- Address Field (Column 2) -->
-    <div class="col-6 column2">
-      <label class="label" for="address">Addressssssssssssssssssssssssss</label>
-      <Field v-slot="{ field }" name="address" rules="required|min:2|lettersOnly">
-        <InputText id="address" class="w-4.5 ml-3" placeholder="Address" v-bind="field"/>
-      </Field>
-      <div>
-        <ErrorMessage class="p-error " name="address"/>
+    <!-- Row 2: Contact and Age -->
+    <div class="form-grid">
+      <!-- Contact Field -->
+      <div class="field-group">
+        <label for="contact" class="label">Contact</label>
+        <div>
+          <Field name="contact" rules="required|phone" v-slot="{ field }">
+            <InputText id="contact" class="input-field" v-bind="field" placeholder="Contact" />
+          </Field>
+          <ErrorMessage name="contact" class="p-error" />
+        </div>
+      </div>
+
+      <!-- Age Field -->
+      <div class="field-group">
+        <label for="age" class="label">Age</label>
+        <div>
+          <Field name="age" rules="required|integer|age" v-slot="{ field }">
+            <InputText id="age" class="input-field" v-bind="field" placeholder="Age" />
+          </Field>
+          <ErrorMessage name="age" class="p-error" />
+        </div>
       </div>
     </div>
 
-    <!-- Contact Field (New Row) -->
-    <div class="col-6 column1">
-      <label class="label" for="contact">Contact</label>
-      <Field v-slot="{ field }" name="contact" rules="required|phone">
-        <InputText id="contact" class="w-4.5 ml-3" placeholder="Contact" v-bind="field"/>
-      </Field>
-      <div>
-        <ErrorMessage class="p-error " name="contact"/>
-      </div>
+    <!-- Submit Button -->
+    <div class="form-row">
+      <Button label="Submit" type="submit" />
     </div>
-
-
-    <!-- Age Field (New Row) -->
-    <div class="col-6 column2">
-      <label class="label" for="age">Age</label>
-      <Field v-slot="{ field }" name="age" rules="required|integer|age">
-        <InputText id="age" class="w-4.5 ml-3" placeholder="Age" v-bind="field"/>
-      </Field>
-      <div>
-        <ErrorMessage class="p-error " name="age"/>
-      </div>
-    </div>
-
-    <!-- Submit Button (New Row) -->
-    <div class="col-12">
-      <div class="form-field">
-        <Button label="Submit" type="submit"/>
-      </div>
-    </div>
-
   </Form>
 </template>
 
+<script setup>
+import { defineRule, Field, Form, ErrorMessage } from "vee-validate";
+import { required, min, integer } from "@vee-validate/rules";
+import InputText from "primevue/inputtext";
+import Button from "primevue/button";
+
+// Define validation rules
+defineRule("required", required);
+defineRule("min", min);
+defineRule("integer", integer);
+defineRule("lettersOnly", (value) => {
+  return /^[A-Za-z]+$/.test(value) || "Only letters are allowed";
+});
+defineRule("phone", (value) => {
+  return /^\d{10}$/.test(value) || "Must be a valid 10-digit phone number";
+});
+
+const handleSubmit = (values) => {
+  console.log("Form submitted with:", values);
+};
+</script>
+
 <style scoped>
+.form-grid {
+  display: grid;
+  grid-template-columns: 150px 1fr 150px 1fr; /* Two label and input pairs side by side */
+  column-gap: 1rem; /* Space between columns */
+  row-gap: 1rem; /* Space between rows */
+  margin-bottom: 1rem;
+}
+
+.field-group {
+  display: contents;
+}
+
+.input-field {
+  width: 100%;
+}
+
+.label {
+  justify-self: start; /* Align label to start */
+}
 
 .p-error {
   color: red;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
 </style>
