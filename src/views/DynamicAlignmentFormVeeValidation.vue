@@ -120,7 +120,7 @@ configure({
 }
 
 .form-row {
-  display: contents; /* Use contents to keep the rows aligned */
+  display: contents;
 }
 
 .p-error {
