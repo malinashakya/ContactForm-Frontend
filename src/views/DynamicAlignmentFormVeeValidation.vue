@@ -2,7 +2,6 @@
 import { configure, defineRule, ErrorMessage, Field, Form } from "vee-validate";
 import Button from "primevue/button";
 import {integer, min, regex, required} from '@vee-validate/rules';
-import {computed} from "vue";
 
 const handleSubmit = () => {
   console.log("Form submitted");
