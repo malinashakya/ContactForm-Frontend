@@ -12,6 +12,7 @@ import DynamicAlignment from "@/views/DynamicAlignment.vue";
 import DynamicAlignmentFormVeeValidation from "@/views/DynamicAlignmentFormVeeValidation.vue";
 import SidebySideFields from "@/views/SidebySideFields.vue";
 import Test from "@/views/Test.vue";
+import example from "@/views/example.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -67,7 +68,7 @@ const router = createRouter({
       component: DynamicAlignmentFormVeeValidation,
     },
     {
-      path: '/sidebysidefields',
+        path: '/sidebysidefields',
       name: 'sidebysidefields',
       component: SidebySideFields,
     },
@@ -75,6 +76,11 @@ const router = createRouter({
       path: '/test',
       name: 'test',
       component: Test,
+    },
+    {
+      path: '/example',
+      name: 'example',
+      component: example,
     },
   ],
 })

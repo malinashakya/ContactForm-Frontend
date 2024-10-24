@@ -1,10 +1,10 @@
 <template>
   <Form @submit="handleSubmit">
     <!-- Row 1: Name and Address -->
-    <div class="form-grid">
+    <div class="form-grid1">
       <!-- Name Field -->
       <div class="field-group">
-        <label class="label" for="name">Name </label>
+        <label class="label" for="name">Stock Valuation Method* </label>
         <div class="fields">
           <Field v-slot="{ field }" name="name" rules="required|min:2|lettersOnly">
             <InputText id="name" class="input-field" placeholder="Name" v-bind="field"/>
@@ -13,9 +13,10 @@
         </div>
       </div>
 
+
       <!-- Address Field -->
       <div class="field-group">
-        <label class="label" for="address">Address</label>
+        <label class="label" for="address">Enable Price Daily Change</label>
         <div class="fields">
           <Field v-slot="{ field }" name="address" rules="required|min:2">
             <InputText id="address" class="input-field" placeholder="Address" v-bind="field"/>
@@ -23,8 +24,9 @@
           <ErrorMessage class="p-error" name="address"/>
         </div>
       </div>
+
       <div class="field-group">
-        <label class="label" for="landline">Landline</label>
+        <label class="label" for="landline">Opening Stock Quantity</label>
         <div  class="fields">
           <Field v-slot="{ field }" name="landline" rules="required">
             <InputText id="landline" class="input-field" placeholder="Landline" v-bind="field"/>
@@ -32,59 +34,15 @@
           <ErrorMessage class="p-error" name="landline"/>
         </div>
       </div>
-      <div class="field-group">
-        <label class="label" for="landline">Landline</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="landline" rules="required">
-            <InputText id="landline" class="input-field" placeholder="Landline" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="landline"/>
-        </div>
-      </div>
-      <div class="field-group">
-        <label class="label" for="landline">Landline</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="landline" rules="required">
-            <InputText id="landline" class="input-field" placeholder="Landline" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="landline"/>
-        </div>
-      </div>
-      <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="age"/>
-        </div>
-      </div>
-      <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="age"/>
-        </div>
-      </div>
-      <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="age"/>
-        </div>
-      </div>
 
     </div>
 
     <!-- Row 2: Contact and Age -->
-    <div class="form-grid">
+    <div class="form-grid1">
       <!-- Contact Field -->
       <div class="field-group">
-        <label class="label" for="contact">Contact</label>
+        <label class="label" for="contact">Inc. VAT Selling Price
+        </label>
         <div class="fields">
           <Field v-slot="{ field }" name="contact" rules="required|phone">
             <InputText id="contact" class="input-field" placeholder="Contact" v-bind="field"/>
@@ -96,7 +54,7 @@
 
       <!-- Age Field -->
       <div class="field-group">
-        <label class="label" for="age">Age</label>
+        <label class="label" for="age">Full Description</label>
         <div class="fields">
           <Field v-slot="{ field }" name="age" rules="required|integer|age">
             <InputText id="age" class="input-field" placeholder="Age" v-bind="field"/>
@@ -117,59 +75,11 @@
         </div>
       </div>
 
-      <!-- DOB Field -->
-      <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="age"/>
-        </div>
-      </div>
 
-      <!-- DOB Field -->
-      <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="age"/>
-        </div>
-      </div>
-      <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="age"/>
-        </div>
-      </div>
-
-      <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="age"/>
-        </div>
-      </div>
-      <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="age"/>
-        </div>
-      </div>
 
     </div>
     <!-- Row 1: Name and Address -->
-    <div class="form-grid">
+    <div class="form-grid1">
       <!-- Name Field -->
       <div class="field-group">
         <label class="label" for="name">Name </label>
@@ -200,9 +110,11 @@
           <ErrorMessage class="p-error" name="landline"/>
         </div>
       </div>
+
+
       <div class="field-group">
         <label class="label" for="landline">Landline</label>
-        <div class="fields">
+        <div  class="fields">
           <Field v-slot="{ field }" name="landline" rules="required">
             <InputText id="landline" class="input-field" placeholder="Landline" v-bind="field"/>
           </Field>
@@ -211,7 +123,7 @@
       </div>
       <div class="field-group">
         <label class="label" for="landline">Landline</label>
-        <div class="fields">
+        <div  class="fields">
           <Field v-slot="{ field }" name="landline" rules="required">
             <InputText id="landline" class="input-field" placeholder="Landline" v-bind="field"/>
           </Field>
@@ -219,123 +131,52 @@
         </div>
       </div>
       <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
+        <label class="label" for="landline">Landline</label>
+        <div  class="fields">
+          <Field v-slot="{ field }" name="landline" rules="required">
+            <InputText id="landline" class="input-field" placeholder="Landline" v-bind="field"/>
           </Field>
-          <ErrorMessage class="p-error" name="age"/>
+          <ErrorMessage class="p-error" name="landline"/>
         </div>
       </div>
       <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
+        <label class="label" for="landline">Landline</label>
+        <div  class="fields">
+          <Field v-slot="{ field }" name="landline" rules="required">
+            <InputText id="landline" class="input-field" placeholder="Landline" v-bind="field"/>
           </Field>
-          <ErrorMessage class="p-error" name="age"/>
+          <ErrorMessage class="p-error" name="landline"/>
         </div>
       </div>
       <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
+        <label class="label" for="landline">Landline</label>
+        <div  class="fields">
+          <Field v-slot="{ field }" name="landline" rules="required">
+            <InputText id="landline" class="input-field" placeholder="Landline" v-bind="field"/>
           </Field>
-          <ErrorMessage class="p-error" name="age"/>
+          <ErrorMessage class="p-error" name="landline"/>
         </div>
       </div>
-
+      <div class="field-group">
+        <label class="label" for="landline">Landline</label>
+        <div  class="fields">
+          <Field v-slot="{ field }" name="landline" rules="required">
+            <InputText id="landline" class="input-field" placeholder="Landline" v-bind="field"/>
+          </Field>
+          <ErrorMessage class="p-error" name="landline"/>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="label" for="landline">Landline</label>
+        <div  class="fields">
+          <Field v-slot="{ field }" name="landline" rules="required">
+            <InputText id="landline" class="input-field" placeholder="Landline" v-bind="field"/>
+          </Field>
+          <ErrorMessage class="p-error" name="landline"/>
+        </div>
+      </div>
     </div>
 
-    <!-- Row 2: Contact and Age -->
-    <div class="form-grid">
-      <!-- Contact Field -->
-      <div class="field-group">
-        <label class="label" for="contact">Contact</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="contact" rules="required|phone">
-            <InputText id="contact" class="input-field" placeholder="Contact" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="contact"/>
-        </div>
-      </div>
-
-
-      <!-- Age Field -->
-      <div class="field-group">
-        <label class="label" for="age">Age</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="age" class="input-field" placeholder="Age" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="age"/>
-        </div>
-      </div>
-
-
-      <!-- DOB Field -->
-      <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="age"/>
-        </div>
-      </div>
-
-      <!-- DOB Field -->
-      <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="age"/>
-        </div>
-      </div>
-
-      <!-- DOB Field -->
-      <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="age"/>
-        </div>
-      </div>
-      <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="age"/>
-        </div>
-      </div>
-
-      <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="age"/>
-        </div>
-      </div>
-      <div class="field-group">
-        <label class="label" for="dob">DOB</label>
-        <div class="fields">
-          <Field v-slot="{ field }" name="age" rules="required|integer|age">
-            <InputText id="dob" class="input-field" placeholder="DOB" v-bind="field"/>
-          </Field>
-          <ErrorMessage class="p-error" name="age"/>
-        </div>
-      </div>
-
-    </div>
 
     <!-- Submit Button -->
     <div class="form-row">
@@ -367,12 +208,12 @@ const handleSubmit = (values) => {
 </script>
 
 <style scoped>
-.form-grid {
+.form-grid1 {
   display: grid;
-  grid-template-columns:  repeat(auto-fit, minmax(10px, 1fr));
+  grid-template-columns:  repeat(3, minmax(20px, 1fr));
   align-items: center;
-  gap: 2rem;
-  margin: 2rem 1rem;
+  gap: 1rem 2rem;
+  margin: 1rem 1rem;
 }
 
 .field-group {
@@ -383,21 +224,14 @@ const handleSubmit = (values) => {
 
 }
 
-.label {
-  width: 3.3rem;
-  margin-right:0.5rem;
-  margin-top:0.5rem;
-}
-
 .input-field {
   width: 100%;
-
 }
 
-.p-error {
-  color: red;
+.label {
+  font-size: 12px;
+  width:140px;
+  margin-right: 0.5rem;
+  margin-top: 0.5rem;
 }
-
 </style>
-
-
