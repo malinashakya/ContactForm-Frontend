@@ -13,6 +13,7 @@ import DynamicAlignmentFormVeeValidation from "@/views/DynamicAlignmentFormVeeVa
 import SidebySideFields from "@/views/SidebySideFields.vue";
 import Test from "@/views/Test.vue";
 import example from "@/views/example.vue";
+import FormSelectValueToInputField from "@/views/FormSelectValueToInputField.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -81,6 +82,11 @@ const router = createRouter({
       path: '/example',
       name: 'example',
       component: example,
+    },
+    {
+      path: '/formselectvaluetoinput',
+      name: 'FormSelectValueToInputField',
+      component: FormSelectValueToInputField,
     },
   ],
 })
